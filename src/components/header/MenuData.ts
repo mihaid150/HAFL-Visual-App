@@ -7,13 +7,13 @@ interface MenuItem {
 const menuData: MenuItem[] = [
     {
         id: 1,
-        title: "Network",
-        path: "/network",
+        title: "Simulation",
+        path: "/simulation",
     },
     {
         id: 2,
-        title: "Simulation",
-        path: "/simulation",
+        title: "Network",
+        path: "/network",
     }
 ];
 

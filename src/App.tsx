@@ -4,6 +4,7 @@ import React from "react";
 import NetworkPage from "./pages/NetworkPage";
 import SimulationPage from "./pages/SimulationPage";
 import {Layout} from "./pages/Layout.tsx";
+import "./global.sass"
 
 const queryClient = new QueryClient({
     defaultOptions: {
