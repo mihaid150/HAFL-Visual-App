@@ -3,9 +3,10 @@ import React from 'react';
 import { useBackendWebSocket } from '../../hooks/useBackendWebSocket';
 import { useNodeOperations } from './NodeOperations';
 import { NodeRecord } from '../../store/nodeSlice';
-import './ButtonsStyle.sass';
-import {useAppSelector} from "../../store/storeHook.ts";
-import {RootState} from "../../store/store.ts";
+import { useAppSelector } from '../../store/storeHook';
+import { RootState } from '../../store/store';
+import './style/ButtonsStyle.sass';
+import './style/NodeOperationsPanel.sass';
 
 interface NodeOperationsPanelProps {
     node: NodeRecord;
@@ -38,22 +39,21 @@ const NodeOperationsPanel: React.FC<NodeOperationsPanelProps> = ({ node, onClose
     );
 
     return (
-        <div>
-            <h3>Node Operations</h3>
-            <p>Label: {node.label}</p>
-            <p>IP Address: {node.ip_address}</p>
-            <p>Port: {node.port}</p>
-            <InitializeNodeButton />
-            <br />
-            <GetNodeInfoButton />
-            <br />
-            <GetParentNodeButton />
-            <br />
-            <GetChildrenNodesButton />
-            <br />
-            <RemoveParentButton />
-            <br />
-            <RemoveChildButton />
+        <div className="node-operations-panel">
+            <div className="node-operations-header">Node Operations</div>
+            <div className="node-operations-details">
+                <p><strong>Label:</strong> {node.label}</p>
+                <p><strong>IP Address:</strong> {node.ip_address}</p>
+                <p><strong>Port:</strong> {node.port}</p>
+            </div>
+            <div className="button-group">
+                <InitializeNodeButton />
+                <GetNodeInfoButton />
+                <GetParentNodeButton />
+                <GetChildrenNodesButton />
+                <RemoveParentButton />
+                <RemoveChildButton />
+            </div>
             <br />
             <button className="red-button" onClick={onClose}>
                 Close

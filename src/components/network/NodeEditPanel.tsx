@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useAppDispatch } from '../../store/storeHook';
 import { NodeRecord } from '../../store/nodeSlice';
-import './ButtonsStyle.sass';
+import './style/NodeEditPanel.sass';
 
 interface NodeEditPanelProps {
     node: NodeRecord;
@@ -27,47 +27,46 @@ const NodeEditPanel: React.FC<NodeEditPanelProps> = ({ node, onClose }) => {
     };
 
     return (
-        <div style={{ padding: '10px' }}>
-            <h3>Edit Node Properties</h3>
-            <div style={{ marginBottom: '8px' }}>
-                <label style={{ display: 'block' }}>
+        <div className="node-edit-panel">
+            <div className="node-edit-header">Edit Node Properties</div>
+            <div className="node-edit-field">
+                <label>
                     Label:
                     <input
                         type="text"
                         value={localLabel}
                         onChange={(e) => setLocalLabel(e.target.value)}
-                        style={{ width: '100%', padding: '4px' }}
                     />
                 </label>
             </div>
-            <div style={{ marginBottom: '8px' }}>
-                <label style={{ display: 'block' }}>
+            <div className="node-edit-field">
+                <label>
                     IP Address:
                     <input
                         type="text"
                         value={localIp}
                         onChange={(e) => setLocalIp(e.target.value)}
-                        style={{ width: '100%', padding: '4px' }}
                     />
                 </label>
             </div>
-            <div style={{ marginBottom: '8px' }}>
-                <label style={{ display: 'block' }}>
+            <div className="node-edit-field">
+                <label>
                     Port:
                     <input
                         type="number"
                         value={localPort}
                         onChange={(e) => setLocalPort(Number(e.target.value))}
-                        style={{ width: '100%', padding: '4px' }}
                     />
                 </label>
             </div>
-            <button onClick={handleSave} className="green-button">
-                Save
-            </button>
-            <button onClick={onClose} className="red-button margin-left">
-                Cancel
-            </button>
+            <div className="button-group">
+                <button onClick={handleSave} className="green-button">
+                    Save
+                </button>
+                <button onClick={onClose} className="red-button margin-left">
+                    Cancel
+                </button>
+            </div>
         </div>
     );
 };

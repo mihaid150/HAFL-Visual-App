@@ -2,7 +2,7 @@
 import {updateNode} from "../../store/nodeSlice";
 import {useAppDispatch} from "../../store/storeHook";
 import { sendOperationToUrl } from '../../hooks/useBackendWebSocket';
-import './ButtonsStyle.sass'
+import './style/ButtonsStyle.sass'
 
 export const useNodeOperations = (id: string, nodeType: number, localLabel: string, localIp: string, localPort: number,
                                   sendOperation: (operation: string, data: unknown) => Promise<unknown>, backendId:number,

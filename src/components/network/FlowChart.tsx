@@ -19,7 +19,7 @@ import { RootState } from '../../store/store';
 import { addNode, clearNodes} from '../../store/nodeSlice';
 import { v4 as uuidv4 } from 'uuid';
 import RightSidebar from './RightSideBar';
-import './ButtonsStyle.sass';
+import './style/ButtonsStyle.sass';
 import NodeEditPanel from './NodeEditPanel';
 import NodeOperationsPanel from './NodeOperationsPanel';
 import { notifyParents, notifyChildren, fetchNodesConnections } from './NotifyConnections';
