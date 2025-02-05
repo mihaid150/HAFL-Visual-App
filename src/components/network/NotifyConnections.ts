@@ -1,13 +1,13 @@
 // src/components/network/NotifyConnections.ts
 import { Edge } from 'reactflow';
 import { sendOperationToUrl } from '../../hooks/useBackendWebSocket';
-import { NodeRecord } from '../../store/nodeSlice';
-import { Dispatch } from 'redux';
+import {NodeRecord, updateNode} from '../../store/nodeSlice';
+import {AppDispatch} from "../../store/store.ts";
 
 export const notifyParents = (
     reduxNodes: NodeRecord[],
     edges: Edge[],
-    dispatch: Dispatch<any>
+    dispatch: AppDispatch
 ) => {
     // Loop over each edge to determine parent–child relationships.
     edges.forEach((edge) => {
@@ -44,7 +44,7 @@ export const notifyParents = (
 export const notifyChildren = (
     reduxNodes: NodeRecord[],
     edges: Edge[],
-    dispatch: Dispatch<any>
+    dispatch: AppDispatch
 ) => {
     const parentToChildrenMap: { [parentLocalId: string]: string[] } = {};
     edges.forEach((edge) => {
@@ -88,4 +88,25 @@ export const notifyChildren = (
                 });
         }
     });
+};
+
+export const fetchNodesConnections = async (
+    reduxNodes: NodeRecord[],
+    dispatch: AppDispatch
+) => {
+    for (const node of reduxNodes) {
+        const wsUrl = `ws://${node.ip_address}:${node.port}/ws`;
+        try {
+            const response = await sendOperationToUrl(wsUrl, "get_node_info", {});
+            if (typeof response === "object" && response !== null && "node" in response) {
+                const nodeInfo = response as {
+                    message: string;
+                    node: { id: number; name: string; type: number; ip_address: string; port: number };
+                };
+                dispatch(updateNode({ localId: node.localId, changes: { backedId: nodeInfo.node.id } }));
+            }
+        } catch (error) {
+            console.error(`Error fetching node info for node ${node.localId}:`, error);
+        }
+    }
 };

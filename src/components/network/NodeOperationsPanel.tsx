@@ -4,6 +4,8 @@ import { useBackendWebSocket } from '../../hooks/useBackendWebSocket';
 import { useNodeOperations } from './NodeOperations';
 import { NodeRecord } from '../../store/nodeSlice';
 import './ButtonsStyle.sass';
+import {useAppSelector} from "../../store/storeHook.ts";
+import {RootState} from "../../store/store.ts";
 
 interface NodeOperationsPanelProps {
     node: NodeRecord;
@@ -14,13 +16,25 @@ const NodeOperationsPanel: React.FC<NodeOperationsPanelProps> = ({ node, onClose
     const wsUrl = `ws://${node.ip_address}:${node.port}/ws`;
     const { sendOperation } = useBackendWebSocket(wsUrl);
 
-    const { InitializeNodeButton, GetNodeInfoButton, GetParentNode } = useNodeOperations(
+    // Look up the parent node in the Redux state by matching backedId with node.parentId.
+    const reduxNodes = useAppSelector((state: RootState) => state.nodes.nodes);
+    const parentNode = reduxNodes.find((n) => n.backedId === node.parentId);
+
+    // If a parent exists, extract its connection info.
+    const parentIp = parentNode ? parentNode.ip_address : undefined;
+    const parentPort = parentNode ? parentNode.port : undefined;
+
+    const { InitializeNodeButton, GetNodeInfoButton, GetParentNodeButton, GetChildrenNodesButton, RemoveParentButton,
+        RemoveChildButton } = useNodeOperations(
         node.localId,
         node.node_type,
         node.label,
         node.ip_address,
         node.port,
-        sendOperation
+        sendOperation,
+        node.backedId,
+        parentIp,
+        parentPort
     );
 
     return (
@@ -33,7 +47,13 @@ const NodeOperationsPanel: React.FC<NodeOperationsPanelProps> = ({ node, onClose
             <br />
             <GetNodeInfoButton />
             <br />
-            <GetParentNode />
+            <GetParentNodeButton />
+            <br />
+            <GetChildrenNodesButton />
+            <br />
+            <RemoveParentButton />
+            <br />
+            <RemoveChildButton />
             <br />
             <button className="red-button" onClick={onClose}>
                 Close

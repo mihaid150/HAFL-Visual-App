@@ -16,13 +16,13 @@ import CustomNode from './CustomNode';
 import { FedNodeType } from './FedNodes';
 import { useAppDispatch, useAppSelector } from '../../store/storeHook';
 import { RootState } from '../../store/store';
-import { addNode, clearNodes, NodeRecord } from '../../store/nodeSlice';
+import { addNode, clearNodes} from '../../store/nodeSlice';
 import { v4 as uuidv4 } from 'uuid';
 import RightSidebar from './RightSideBar';
 import './ButtonsStyle.sass';
 import NodeEditPanel from './NodeEditPanel';
 import NodeOperationsPanel from './NodeOperationsPanel';
-import { notifyParents, notifyChildren } from './NotifyConnections';
+import { notifyParents, notifyChildren, fetchNodesConnections } from './NotifyConnections';
 
 const nodeTypes = { custom: CustomNode };
 
@@ -57,8 +57,6 @@ const FlowChart: React.FC = () => {
         data: {
             ...n,
             onRemove: (localId: string) => dispatch({ type: 'nodes/removeNode', payload: localId }),
-            onEdit: (localId: string, changes: Partial<NodeRecord>) =>
-                dispatch({ type: 'nodes/updateNode', payload: { localId, changes } }),
             onEditRequested: () => {
                 setRightSidebarContent(<NodeEditPanel node={n} onClose={() => setRightSidebarContent(null)} />);
             },
@@ -80,7 +78,7 @@ const FlowChart: React.FC = () => {
                 y: event.clientY - reactFlowBounds.top,
             };
 
-            let label = '';
+            let label;
             switch (nodeType) {
                 case FedNodeType.CLOUD_NODE:
                     label = 'Cloud Node';
@@ -210,12 +208,17 @@ const FlowChart: React.FC = () => {
         setEdges([]);
     }, [dispatch]);
 
+    const fetchNodes = useCallback(async () => {
+        await fetchNodesConnections(reduxNodes, dispatch);
+    }, [reduxNodes, dispatch]);
+
     return (
         <div style={{ display: 'flex', height: '100%', width: '100%' }}>
             <LeftSidebar
                 onSaveTopology={saveTopology}
                 onLoadTopology={loadTopology}
                 onRemoveTopology={removeTopology}
+                onFetchNodes={fetchNodes}
                 onNotifyParents={() => notifyParents(reduxNodes, edges, dispatch)}
                 onNotifyChildren={() => notifyChildren(reduxNodes, edges, dispatch)}
             />
