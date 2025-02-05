@@ -1,13 +1,23 @@
 import React from 'react';
 import { FedNodeType } from './FedNodes'; // Adjust the import path as needed
+import './ButtonsStyle.sass'
 
 interface SidebarProps {
     onSaveTopology: () => void;
     onLoadTopology: () => void;
     onRemoveTopology: () => void;
+    onNotifyParents: () => void;
+    onNotifyChildren: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onSaveTopology, onLoadTopology, onRemoveTopology }) => {
+const LeftSidebar: React.FC<SidebarProps> = ({
+    onSaveTopology,
+    onLoadTopology,
+    onRemoveTopology,
+    onNotifyParents,
+    onNotifyChildren
+}) => {
+
     const onDragStart = (event: React.DragEvent, nodeType: FedNodeType) => {
         // Store the node type as a string so it can be later interpreted by the drop handler.
         event.dataTransfer.setData('application/reactflow', String(nodeType));
@@ -15,7 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSaveTopology, onLoadTopology, onRem
     };
 
     return (
-        <aside style={{padding: '1rem', borderRight: '1px solid #ccc'}}>
+        <aside style={{padding: '1rem', borderRight: '1px solid #ccc', width: '200px'}}>
             <div
                 onDragStart={(event) => onDragStart(event, FedNodeType.CLOUD_NODE)}
                 draggable
@@ -59,24 +69,31 @@ const Sidebar: React.FC<SidebarProps> = ({ onSaveTopology, onLoadTopology, onRem
             <hr style={{margin: '1rem 0'}}/>
 
             {/* Persistence buttons */}
-            <button onClick={onSaveTopology} style={{width: '90%', marginBottom: '0.5rem'}}>
+            <button onClick={onSaveTopology} className="blue-button">
                 Save Topology
             </button>
             <button
                 onClick={onLoadTopology}
-                style={{width: '90%', marginBottom: '0.5rem'}}
+                className="blue-button"
             >
                 Load Saved Topology
             </button>
             <button
                 onClick={onRemoveTopology}
-                style={{width: '90%'}}
+                className="blue-button"
             >
                 Clear Topology
             </button>
 
+            <button onClick={onNotifyParents} className="blue-button">
+                Notify Parents
+            </button>
+
+            <button onClick={onNotifyChildren} className="blue-button">
+                Notify Children
+            </button>
         </aside>
     );
 };
 
-export default Sidebar;
+export default LeftSidebar;

@@ -1,63 +1,73 @@
 // src/components/flowchart/FlowChart.tsx
-
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactFlow, {
     addEdge,
-    MiniMap,
     Controls,
     Background,
-    useNodesState,
-    useEdgesState,
     Connection,
-    Node,
+    Node as RFNode,
     Edge,
+    applyEdgeChanges,
+    NodeChange,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import Sidebar from './Sidebar';
+import LeftSidebar from './LeftSidebar';
 import CustomNode from './CustomNode';
 import { FedNodeType } from './FedNodes';
+import { useAppDispatch, useAppSelector } from '../../store/storeHook';
+import { RootState } from '../../store/store';
+import { addNode, clearNodes, NodeRecord } from '../../store/nodeSlice';
+import { v4 as uuidv4 } from 'uuid';
+import RightSidebar from './RightSideBar';
+import './ButtonsStyle.sass';
+import NodeEditPanel from './NodeEditPanel';
+import NodeOperationsPanel from './NodeOperationsPanel';
+import { notifyParents, notifyChildren } from './NotifyConnections';
 
 const nodeTypes = { custom: CustomNode };
 
-let id = 4;
-const getId = () => `${id++}`;
+interface LoadedNodeData {
+    backedId: number;
+    label: string;
+    ip_address: string;
+    port: number;
+    node_type: number;
+    parentId?: number;
+    childrenIds?: number[];
+}
+
+interface LoadedNode {
+    id: string;
+    type: string;
+    position: { x: number; y: number };
+    data: LoadedNodeData;
+}
 
 const FlowChart: React.FC = () => {
-    // Start with an empty topology.
-    const initialNodes: Node[] = [];
-    const initialEdges: Edge[] = [];
-
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+    const [edges, setEdges] = useState<Edge[]>([]);
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
+    const [rightSidebarContent, setRightSidebarContent] = useState<React.ReactNode | null>(null);
+    const dispatch = useAppDispatch();
+    const reduxNodes = useAppSelector((state: RootState) => state.nodes.nodes);
 
-    // State to store the selected edge's ID.
-    const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
-
-    // Callback to remove a node by id.
-    const removeNode = useCallback(
-        (nodeId: string) => {
-            setNodes((nds) => nds.filter((node) => node.id !== nodeId));
+    const nodes: RFNode[] = reduxNodes.map((n) => ({
+        id: n.localId,
+        type: 'custom',
+        position: n.flowchart_position,
+        data: {
+            ...n,
+            onRemove: (localId: string) => dispatch({ type: 'nodes/removeNode', payload: localId }),
+            onEdit: (localId: string, changes: Partial<NodeRecord>) =>
+                dispatch({ type: 'nodes/updateNode', payload: { localId, changes } }),
+            onEditRequested: () => {
+                setRightSidebarContent(<NodeEditPanel node={n} onClose={() => setRightSidebarContent(null)} />);
+            },
+            onOperationsRequested: () => {
+                setRightSidebarContent(<NodeOperationsPanel node={n} onClose={() => setRightSidebarContent(null)} />);
+            },
         },
-        [setNodes]
-    );
+    }));
 
-    // Update a node's data (used for editing properties).
-    const updateNode = useCallback(
-        (nodeId: string, newData: Partial<{ label: string; ip_address: string; port: number }>) => {
-            setNodes((nds) =>
-                nds.map((node) => (node.id === nodeId ? { ...node, data: { ...node.data, ...newData } } : node))
-            );
-        },
-        [setNodes]
-    );
-
-    const onConnect = useCallback(
-        (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-        [setEdges]
-    );
-
-    // onDrop: Create a new node when a draggable item is dropped.
     const onDrop = useCallback(
         (event: React.DragEvent) => {
             event.preventDefault();
@@ -69,6 +79,7 @@ const FlowChart: React.FC = () => {
                 x: event.clientX - reactFlowBounds.left,
                 y: event.clientY - reactFlowBounds.top,
             };
+
             let label = '';
             switch (nodeType) {
                 case FedNodeType.CLOUD_NODE:
@@ -83,15 +94,22 @@ const FlowChart: React.FC = () => {
                 default:
                     label = 'Default Node';
             }
-            const newNode: Node = {
-                id: getId(),
-                type: 'custom',
-                position,
-                data: { label, ip_address: '', port: 0, node_type: nodeType, onRemove: removeNode, onEdit: updateNode },
+
+            const localId = uuidv4();
+            const newNode = {
+                localId,
+                backedId: 0,
+                label,
+                ip_address: '',
+                port: 0,
+                node_type: nodeType,
+                flowchart_position: position,
+                parentId: undefined,
+                childrenIds: [],
             };
-            setNodes((nds) => nds.concat(newNode));
+            dispatch(addNode(newNode));
         },
-        [setNodes, removeNode, updateNode]
+        [dispatch]
     );
 
     const onDragOver = useCallback((event: React.DragEvent) => {
@@ -99,16 +117,26 @@ const FlowChart: React.FC = () => {
         event.dataTransfer.dropEffect = 'move';
     }, []);
 
+    const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), []);
+    const onNodesChange = useCallback(
+        (changes: NodeChange[]) => {
+            changes.forEach((change: NodeChange) => {
+                if (change.type === 'position' && change.position) {
+                    dispatch({
+                        type: 'nodes/updateNode',
+                        payload: { localId: change.id, changes: { flowchart_position: change.position } },
+                    });
+                }
+            });
+        },
+        [dispatch]
+    );
+
+    const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
     const onEdgeClick = useCallback((_event: React.MouseEvent, edge: Edge) => {
         setSelectedEdgeId(edge.id);
     }, []);
-
-    // Clear selection on pane click.
-    const onPaneClick = useCallback(() => {
-        setSelectedEdgeId(null);
-    }, []);
-
-    // Global keydown handler to remove selected edge if Delete or Backspace is pressed.
+    const onPaneClick = useCallback(() => setSelectedEdgeId(null), []);
     const handleKeyDown = useCallback(
         (event: KeyboardEvent) => {
             if ((event.key === 'Delete' || event.key === 'Backspace') && selectedEdgeId) {
@@ -116,15 +144,13 @@ const FlowChart: React.FC = () => {
                 setSelectedEdgeId(null);
             }
         },
-        [selectedEdgeId, setEdges]
+        [selectedEdgeId]
     );
-
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [handleKeyDown]);
 
-    // Persistence functions.
     const saveTopology = useCallback(() => {
         const topology = JSON.stringify({ nodes, edges }, null, 2);
         const blob = new Blob([topology], { type: 'application/json' });
@@ -132,12 +158,9 @@ const FlowChart: React.FC = () => {
         const link = document.createElement('a');
         link.href = url;
         const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const formattedDateTime = `${year}_${month}_${day}_${hours}_${minutes}`;
+        const formattedDateTime = `${now.getFullYear()}_${String(now.getMonth() + 1).padStart(2, '0')}_${String(
+            now.getDate()
+        ).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}_${String(now.getMinutes()).padStart(2, '0')}`;
         link.download = `federated_topology_${formattedDateTime}.json`;
         document.body.appendChild(link);
         link.click();
@@ -157,9 +180,22 @@ const FlowChart: React.FC = () => {
             reader.onload = (event) => {
                 try {
                     const result = event.target?.result as string;
-                    const { nodes: loadedNodes, edges: loadedEdges } = JSON.parse(result);
-                    setNodes(loadedNodes);
-                    setEdges(loadedEdges);
+                    const parsed = JSON.parse(result) as { nodes: unknown; edges: Edge[] };
+                    const loadedNodes = parsed.nodes as LoadedNode[];
+                    const transformedNodes = loadedNodes.map((node) => ({
+                        localId: node.id,
+                        backedId: node.data.backedId ?? 0,
+                        label: node.data.label,
+                        ip_address: node.data.ip_address,
+                        port: node.data.port,
+                        node_type: node.data.node_type,
+                        flowchart_position: node.position,
+                        parentId: node.data.parentId,
+                        childrenIds: node.data.childrenIds,
+                    }));
+                    dispatch(clearNodes());
+                    transformedNodes.forEach((n) => dispatch(addNode(n)));
+                    setEdges(parsed.edges);
                 } catch (error) {
                     console.error('Error parsing file:', error);
                 }
@@ -167,26 +203,28 @@ const FlowChart: React.FC = () => {
             reader.readAsText(file);
         };
         input.click();
-    }, [setNodes, setEdges]);
+    }, [dispatch]);
 
     const removeTopology = useCallback(() => {
-        setNodes([]);
+        dispatch(clearNodes());
         setEdges([]);
-    }, [setNodes, setEdges]);
+    }, [dispatch]);
 
     return (
         <div style={{ display: 'flex', height: '100%', width: '100%' }}>
-            <Sidebar
+            <LeftSidebar
                 onSaveTopology={saveTopology}
                 onLoadTopology={loadTopology}
                 onRemoveTopology={removeTopology}
+                onNotifyParents={() => notifyParents(reduxNodes, edges, dispatch)}
+                onNotifyChildren={() => notifyChildren(reduxNodes, edges, dispatch)}
             />
-            <div style={{ flexGrow: 1 }} ref={reactFlowWrapper}>
+            <div style={{ flexGrow: 1, position: 'relative' }} ref={reactFlowWrapper}>
                 <ReactFlow
                     nodes={nodes}
                     edges={edges}
+                    onEdgesChange={(changes) => setEdges((eds) => applyEdgeChanges(changes, eds))}
                     onNodesChange={onNodesChange}
-                    onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
                     onDrop={onDrop}
                     onDragOver={onDragOver}
@@ -195,11 +233,11 @@ const FlowChart: React.FC = () => {
                     nodeTypes={nodeTypes}
                     fitView
                 >
-                    <MiniMap />
                     <Controls />
                     <Background />
                 </ReactFlow>
             </div>
+            {rightSidebarContent && <RightSidebar content={rightSidebarContent} onClose={() => setRightSidebarContent(null)} />}
         </div>
     );
 };
