@@ -1,0 +1,91 @@
+// src/components/network/NotifyConnections.ts
+import { Edge } from 'reactflow';
+import { sendOperationToUrl } from '../../hooks/useBackendWebSocket';
+import { NodeRecord } from '../../store/nodeSlice';
+import { Dispatch } from 'redux';
+
+export const notifyParents = (
+    reduxNodes: NodeRecord[],
+    edges: Edge[],
+    dispatch: Dispatch<any>
+) => {
+    // Loop over each edge to determine parent–child relationships.
+    edges.forEach((edge) => {
+        // Assume edge.source is parent's localId and edge.target is child's localId.
+        const parentNode = reduxNodes.find((node) => node.localId === edge.source);
+        const childNode = reduxNodes.find((node) => node.localId === edge.target);
+        if (parentNode && childNode && parentNode.backedId) {
+            // Update child record if necessary.
+            if (childNode.parentId !== parentNode.backedId) {
+                dispatch({
+                    type: 'nodes/updateNode',
+                    payload: { localId: childNode.localId, changes: { parentId: parentNode.backedId } },
+                });
+            }
+            // Notify the child's backend.
+            const wsUrl = `ws://${childNode.ip_address}:${childNode.port}/ws`;
+            sendOperationToUrl(wsUrl, 'set_parent', {
+                id: parentNode.backedId,
+                name: parentNode.label,
+                node_type: parentNode.node_type,
+                ip_address: parentNode.ip_address,
+                port: parentNode.port,
+            })
+                .then((response) => {
+                    console.log(`Notified parent for node ${childNode.localId}:`, response);
+                })
+                .catch((err) => {
+                    console.error(`Error notifying parent for node ${childNode.localId}:`, err);
+                });
+        }
+    });
+};
+
+export const notifyChildren = (
+    reduxNodes: NodeRecord[],
+    edges: Edge[],
+    dispatch: Dispatch<any>
+) => {
+    const parentToChildrenMap: { [parentLocalId: string]: string[] } = {};
+    edges.forEach((edge) => {
+        if (!parentToChildrenMap[edge.source]) {
+            parentToChildrenMap[edge.source] = [];
+        }
+        parentToChildrenMap[edge.source].push(edge.target);
+    });
+
+    Object.entries(parentToChildrenMap).forEach(([parentLocalId, childrenLocalIds]) => {
+        const parentNode = reduxNodes.find((node) => node.localId === parentLocalId);
+        if (parentNode && parentNode.backedId) {
+            const childrenNodes = reduxNodes.filter((node) =>
+                childrenLocalIds.includes(node.localId)
+            );
+            const newChildrenIds = childrenNodes
+                .filter((child) => !!child.backedId)
+                .map((child) => child.backedId);
+            if (
+                !parentNode.childrenIds ||
+                JSON.stringify(parentNode.childrenIds.sort()) !== JSON.stringify(newChildrenIds.sort())
+            ) {
+                dispatch({
+                    type: 'nodes/updateNode',
+                    payload: { localId: parentNode.localId, changes: { childrenIds: newChildrenIds } },
+                });
+            }
+            const wsUrl = `ws://${parentNode.ip_address}:${parentNode.port}/ws`;
+            sendOperationToUrl(wsUrl, 'set_children', childrenNodes.map((child) => ({
+                id: child.backedId,
+                name: child.label,
+                node_type: child.node_type,
+                ip_address: child.ip_address,
+                port: child.port,
+            })))
+                .then((response) => {
+                    console.log(`Notified children for node ${parentNode.localId}:`, response);
+                })
+                .catch((err) => {
+                    console.error(`Error notifying children for node ${parentNode.localId}:`, err);
+                });
+        }
+    });
+};
