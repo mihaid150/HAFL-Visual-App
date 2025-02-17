@@ -7,6 +7,7 @@ interface SidebarProps {
     onSaveTopology: () => void;
     onLoadTopology: () => void;
     onRemoveTopology: () => void;
+    onNodesInitialization: () => void;
     onFetchNodes: () => void;
     onNotifyParents: () => void;
     onNotifyChildren: () => void;
@@ -16,6 +17,7 @@ const LeftSidebar: React.FC<SidebarProps> = ({
     onSaveTopology,
     onLoadTopology,
     onRemoveTopology,
+    onNodesInitialization,
     onFetchNodes,
     onNotifyParents,
     onNotifyChildren
@@ -62,6 +64,9 @@ const LeftSidebar: React.FC<SidebarProps> = ({
                 </button>
                 <button onClick={onRemoveTopology} className="blue-button">
                     Clear Topology
+                </button>
+                <button onClick={onNodesInitialization} className="blue-button">
+                    Initialize Nodes
                 </button>
                 <button onClick={onFetchNodes} className="blue-button">
                     Fetch Nodes
