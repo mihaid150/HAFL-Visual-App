@@ -14,7 +14,7 @@ interface NodeOperationsPanelProps {
 }
 
 const NodeOperationsPanel: React.FC<NodeOperationsPanelProps> = ({ node, onClose }) => {
-    const wsUrl = `ws://${node.ip_address}:${node.port}/ws`;
+    const wsUrl = `ws://${node.ip_address}:${node.port}/node/ws`;
     const { sendOperation } = useBackendWebSocket(wsUrl);
 
     // Look up the parent node in the Redux state by matching backedId with node.parentId.
