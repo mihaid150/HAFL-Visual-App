@@ -5,7 +5,7 @@ import { sendOperationToUrl } from '../../hooks/useBackendWebSocket';
 import './style/ButtonsStyle.sass'
 
 export const useNodeOperations = (id: string, nodeType: number, localLabel: string, localIp: string, localPort: number,
-                                  sendOperation: (operation: string, data: unknown) => Promise<unknown>, backendId:number,
+                                  sendOperation: (operation: string, data: unknown) => Promise<unknown>, backendId: string,
                                   parentIp:string | undefined, parentPort:number | undefined) => {
     const dispatch = useAppDispatch();
 
@@ -21,7 +21,7 @@ export const useNodeOperations = (id: string, nodeType: number, localLabel: stri
                 if (typeof response === "object" && response !== null && "node" in response) {
                     const nodeInfo = response as {
                         message: string;
-                        node: { id: number; name: string; type: number; ip_address: string; port: number };
+                        node: { id: string; name: string; type: number; ip_address: string; port: number };
                     };
                     alert(`Node initialized: id ${nodeInfo.node.id}, name ${nodeInfo.node.name}`);
                     dispatch(updateNode({localId: id, changes: {backedId: nodeInfo.node.id}}));
@@ -55,7 +55,7 @@ export const useNodeOperations = (id: string, nodeType: number, localLabel: stri
                 if (typeof response === "object" && response !== null && "node" in response) {
                     const nodeInfo = response as {
                         message: string;
-                        node: { id: number; name: string; type: number; ip_address: string; port: number }
+                        node: { id: string; name: string; type: number; ip_address: string; port: number }
                     };
                     alert("Node status: id " + nodeInfo.node.id + " name " + nodeInfo.node.name);
                     dispatch(updateNode({localId: id, changes: { backedId: nodeInfo.node.id}}));
@@ -94,7 +94,7 @@ export const useNodeOperations = (id: string, nodeType: number, localLabel: stri
                     const nodeInfo = response as {
                         message: string;
                         parent_node: {
-                            id: number;
+                            id: string;
                             name: string;
                             type: number;
                             ip_address: string;
@@ -140,7 +140,7 @@ export const useNodeOperations = (id: string, nodeType: number, localLabel: stri
                     "children" in response
                 ) {
                     const childrenArray = response.children as Array<{
-                        id: number;
+                        id: string;
                         name: string;
                         type: number;
                         ip_address: string;
@@ -201,13 +201,10 @@ export const useNodeOperations = (id: string, nodeType: number, localLabel: stri
         );
     };
 
-    // New: Remove Child Operation
-    // This operation will be executed on the parent's backend.
-    // It requires that the current node (child) has a backedId and that parent's connection info is provided.
     const handleRemoveChildOperation = async () => {
         if (localLabel && localIp && localPort && parentIp && parentPort && backendId) {
             try {
-                const wsUrl = `ws://${parentIp}:${parentPort}/ws`;
+                const wsUrl = `ws://${parentIp}:${parentPort}/node/ws`;
                 const response = await sendOperationToUrl(wsUrl, "remove_child", { child_id: backendId });
                 alert("Child removed: " + JSON.stringify(response));
             } catch (error: unknown) {
