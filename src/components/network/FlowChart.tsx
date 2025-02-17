@@ -22,12 +22,13 @@ import RightSidebar from './RightSideBar';
 import './style/ButtonsStyle.sass';
 import NodeEditPanel from './NodeEditPanel';
 import NodeOperationsPanel from './NodeOperationsPanel';
-import { notifyParents, notifyChildren, fetchNodesConnections } from './NotifyConnections';
+import { notifyParents, notifyChildren, fetchNodesConnections, executeNodesInitialization } from './NotifyConnections';
+import CloudInitPanel from "./CloudInitPanel.tsx";
 
 const nodeTypes = { custom: CustomNode };
 
 interface LoadedNodeData {
-    backedId: number;
+    backedId: string;
     label: string;
     ip_address: string;
     port: number;
@@ -63,6 +64,15 @@ const FlowChart: React.FC = () => {
             onOperationsRequested: () => {
                 setRightSidebarContent(<NodeOperationsPanel node={n} onClose={() => setRightSidebarContent(null)} />);
             },
+            onCloudInitRequested: n.node_type === FedNodeType.CLOUD_NODE
+                ? () => setRightSidebarContent(
+                    <CloudInitPanel
+                        ip_address={n.ip_address}
+                        port={n.port}
+                        onClose={() => setRightSidebarContent(null)}
+                    />
+                )
+                : undefined,
         },
     }));
 
@@ -93,10 +103,10 @@ const FlowChart: React.FC = () => {
                     label = 'Default Node';
             }
 
-            const localId = uuidv4();
+            const localId = uuidv4().toString();
             const newNode = {
                 localId,
-                backedId: 0,
+                backedId: '',
                 label,
                 ip_address: '',
                 port: 0,
@@ -182,14 +192,14 @@ const FlowChart: React.FC = () => {
                     const loadedNodes = parsed.nodes as LoadedNode[];
                     const transformedNodes = loadedNodes.map((node) => ({
                         localId: node.id,
-                        backedId: node.data.backedId ?? 0,
+                        backedId: node.data.backedId ?? '',
                         label: node.data.label,
                         ip_address: node.data.ip_address,
                         port: node.data.port,
                         node_type: node.data.node_type,
                         flowchart_position: node.position,
-                        parentId: node.data.parentId,
-                        childrenIds: node.data.childrenIds,
+                        parentId: node.data.parentId !== undefined ? String(node.data.parentId) : undefined,
+                        childrenIds: node.data.childrenIds ? node.data.childrenIds.map(id => String(id)) : undefined,
                     }));
                     dispatch(clearNodes());
                     transformedNodes.forEach((n) => dispatch(addNode(n)));
@@ -212,12 +222,17 @@ const FlowChart: React.FC = () => {
         await fetchNodesConnections(reduxNodes, dispatch);
     }, [reduxNodes, dispatch]);
 
+    const initializeNodes = useCallback(async () => {
+        await executeNodesInitialization(reduxNodes, dispatch);
+    }, [reduxNodes, dispatch])
+
     return (
         <div style={{ display: 'flex', height: '100%', width: '100%' }}>
             <LeftSidebar
                 onSaveTopology={saveTopology}
                 onLoadTopology={loadTopology}
                 onRemoveTopology={removeTopology}
+                onNodesInitialization={initializeNodes}
                 onFetchNodes={fetchNodes}
                 onNotifyParents={() => notifyParents(reduxNodes, edges, dispatch)}
                 onNotifyChildren={() => notifyChildren(reduxNodes, edges, dispatch)}
