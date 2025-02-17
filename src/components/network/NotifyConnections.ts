@@ -1,6 +1,6 @@
 // src/components/network/NotifyConnections.ts
-import { Edge } from 'reactflow';
-import { sendOperationToUrl } from '../../hooks/useBackendWebSocket';
+import {Edge} from 'reactflow';
+import {sendOperationToUrl} from '../../hooks/useBackendWebSocket';
 import {NodeRecord, updateNode} from '../../store/nodeSlice';
 import {AppDispatch} from "../../store/store.ts";
 
@@ -19,11 +19,11 @@ export const notifyParents = (
             if (childNode.parentId !== parentNode.backedId) {
                 dispatch({
                     type: 'nodes/updateNode',
-                    payload: { localId: childNode.localId, changes: { parentId: parentNode.backedId } },
+                    payload: {localId: childNode.localId, changes: {parentId: parentNode.backedId}},
                 });
             }
             // Notify the child's backend.
-            const wsUrl = `ws://${childNode.ip_address}:${childNode.port}/ws`;
+            const wsUrl = `ws://${childNode.ip_address}:${childNode.port}/node/ws`;
             sendOperationToUrl(wsUrl, 'set_parent', {
                 id: parentNode.backedId,
                 name: parentNode.label,
@@ -69,10 +69,10 @@ export const notifyChildren = (
             ) {
                 dispatch({
                     type: 'nodes/updateNode',
-                    payload: { localId: parentNode.localId, changes: { childrenIds: newChildrenIds } },
+                    payload: {localId: parentNode.localId, changes: {childrenIds: newChildrenIds}},
                 });
             }
-            const wsUrl = `ws://${parentNode.ip_address}:${parentNode.port}/ws`;
+            const wsUrl = `ws://${parentNode.ip_address}:${parentNode.port}/node/ws`;
             sendOperationToUrl(wsUrl, 'set_children', childrenNodes.map((child) => ({
                 id: child.backedId,
                 name: child.label,
@@ -95,18 +95,60 @@ export const fetchNodesConnections = async (
     dispatch: AppDispatch
 ) => {
     for (const node of reduxNodes) {
-        const wsUrl = `ws://${node.ip_address}:${node.port}/ws`;
+        const wsUrl = `ws://${node.ip_address}:${node.port}/node/ws`;
         try {
             const response = await sendOperationToUrl(wsUrl, "get_node_info", {});
             if (typeof response === "object" && response !== null && "node" in response) {
                 const nodeInfo = response as {
                     message: string;
-                    node: { id: number; name: string; type: number; ip_address: string; port: number };
+                    node: { id: string; name: string; type: number; ip_address: string; port: number };
                 };
-                dispatch(updateNode({ localId: node.localId, changes: { backedId: nodeInfo.node.id } }));
+                dispatch(updateNode({localId: node.localId, changes: {backedId: nodeInfo.node.id}}));
             }
         } catch (error) {
             console.error(`Error fetching node info for node ${node.localId}:`, error);
         }
     }
 };
+
+export const executeNodesInitialization = async (
+    reduxNodes: NodeRecord[],
+    dispatch: AppDispatch
+) => {
+    const isNodeInitialize: Record<string, boolean> = {};
+    for (const node of reduxNodes) {
+        if (node.label && node.ip_address && node.port) {
+            try {
+                const wsUrl = `ws://${node.ip_address}:${node.port}/node/ws`;
+                const response = await sendOperationToUrl(wsUrl, "initialize", {
+                    name: node.label,
+                    node_type: node.node_type,
+                    ip_address: node.ip_address,
+                    port: node.port,
+                });
+
+                if (typeof response === "object" && response !== null && "node" in response) {
+                    isNodeInitialize[node.label] = true;
+
+                    const nodeInfo = response as {
+                        message: string;
+                        node: { id: string; name: string; type: number; ip_address: string; port: number };
+                    };
+                    dispatch(updateNode({localId: node.localId, changes: {backedId: nodeInfo.node.id}}));
+                } else {
+                    isNodeInitialize[node.label] = false;
+                }
+            } catch (error: unknown) {
+                alert("Error: " + String(error));
+            }
+        }
+    }
+
+    const allTrue = Object.values(isNodeInitialize).every(value => value);
+
+    if (allTrue) {
+        alert("All nodes have been initialized successfully!");
+    } else {
+        alert("There was a problem initializing all the nodes.");
+    }
+}
