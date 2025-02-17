@@ -4,14 +4,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface NodeRecord {
     localId: string;
-    backedId: number;
+    backedId: string;
     label: string;
     ip_address: string;
     port: number;
     node_type: number;
     flowchart_position: { x: number; y: number };
-    parentId?: number;
-    childrenIds?: number[];
+    parentId?: string;
+    childrenIds?: string[];
     sendOperation?: (operation: string, data: unknown) => Promise<unknown>; // Add this line
 }
 
@@ -43,7 +43,7 @@ const nodeSlice = createSlice({
         },
         setParentForNode: (
             state,
-            action: PayloadAction<{ localId: string, parentId: number }>
+            action: PayloadAction<{ localId: string, parentId: string }>
         ) => {
             const { localId, parentId } = action.payload;
             const node = state.nodes.find((n) => n.localId === localId);
@@ -53,7 +53,7 @@ const nodeSlice = createSlice({
         },
         addChildToNode: (
             state,
-            action: PayloadAction<{ localId: string, childId: number }>
+            action: PayloadAction<{ localId: string, childId: string }>
         ) => {
             const { localId, childId } = action.payload;
             const node = state.nodes.find((n) => n.localId === localId);
