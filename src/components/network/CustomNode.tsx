@@ -5,6 +5,7 @@ import { FedNodeType } from './FedNodes';
 import CancelIcon from '../../assets/icons8-cancel.svg';
 import ConfigIcon from '../../assets/icons8-config.svg';
 import OperationsIcon from '../../assets/icons8-bulb.svg';
+import StartIcon from '../../assets/icons8-start-100.png';
 import "./style/CustomNode.sass";
 
 const CustomNode: React.FC<NodeProps> = ({ id, data }) => {
@@ -67,6 +68,11 @@ const CustomNode: React.FC<NodeProps> = ({ id, data }) => {
                 <button onClick={() => data.onRemove && data.onRemove(id)} className="button remove-button">
                     <img src={CancelIcon} alt="Remove" style={{width: '16px', height: '16px'}}/>
                 </button>
+                {data.node_type === FedNodeType.CLOUD_NODE && data.onCloudInitRequested && (
+                    <button onClick={data.onCloudInitRequested} className="button start-button">
+                        <img src={StartIcon} alt="Remove" style={{width: '16px', height: '16px'}}/>
+                    </button>
+                )}
             </div>
             <Handle type="target" position={Position.Top} className="handle"/>
             <Handle type="source" position={Position.Bottom} className="handle"/>
