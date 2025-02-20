@@ -1,4 +1,4 @@
-// src/components/flowchart/FlowChart.tsx
+// src/components/simulation/FlowChart.tsx
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactFlow, {
     addEdge,
@@ -11,19 +11,19 @@ import ReactFlow, {
     NodeChange,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import LeftSidebar from './LeftSidebar';
-import CustomNode from './CustomNode';
-import { FedNodeType } from './FedNodes';
-import { useAppDispatch, useAppSelector } from '../../store/storeHook';
-import { RootState } from '../../store/store';
-import { addNode, clearNodes} from '../../store/nodeSlice';
+import LeftSidebar from './side_bars/LeftSidebar.tsx';
+import CustomNode from './CustomNode.tsx';
+import { FedNodeType } from './FedNodes.ts';
+import { useAppDispatch, useAppSelector } from '../../store/storeHook.ts';
+import { RootState } from '../../store/store.ts';
+import { addNode, clearNodes} from '../../store/nodeSlice.ts';
 import { v4 as uuidv4 } from 'uuid';
-import RightSidebar from './RightSideBar';
+import RightSidebar from './side_bars/RightSideBar.tsx';
 import './style/ButtonsStyle.sass';
-import NodeEditPanel from './NodeEditPanel';
-import NodeOperationsPanel from './NodeOperationsPanel';
-import { notifyParents, notifyChildren, fetchNodesConnections, executeNodesInitialization } from './NotifyConnections';
-import CloudPanelsWrapper from "./CloudPanelsWrapper.tsx";
+import NodeEditPanel from './node_actions/NodeEditPanel.tsx';
+import NodeOperationsPanel from './node_actions/NodeOperationsPanel.tsx';
+import { notifyParents, notifyChildren, fetchNodesConnections, executeNodesInitialization } from './NotifyConnections.ts';
+import CloudPanelsWrapper from "./cloud_specific/CloudPanelsWrapper.tsx";
 
 const nodeTypes = { custom: CustomNode };
 

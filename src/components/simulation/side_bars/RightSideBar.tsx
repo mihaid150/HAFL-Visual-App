@@ -1,4 +1,4 @@
-// src/components/flowchart/RightSidebar.tsx
+// src/components/simulation/side_bars/RightSidebar.tsx
 import React from 'react';
 
 interface RightSidebarProps {

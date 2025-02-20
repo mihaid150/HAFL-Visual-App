@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import './style/ButtonsStyle.sass';
-import './style/TrainingPanel.sass';
-import {useBackendWebSocket} from "../../hooks/useBackendWebSocket.ts";
-import { useCloudNode } from './CloudNodeContext';
+import '../style/ButtonsStyle.sass';
+import '../style/TrainingPanel.sass';
+import {useBackendWebSocket} from "../../../hooks/useBackendWebSocket.ts";
+import { useCloudNode } from './CloudNodeContext.tsx';
 
 interface TrainingPanelProps {
     onClose: () => void;

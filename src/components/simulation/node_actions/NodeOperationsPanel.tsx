@@ -1,12 +1,12 @@
-// src/components/flowchart/NodeOperationsPanel.tsx
+// src/components/simulation/node_actions/NodeOperationsPanel.tsx
 import React from 'react';
-import { useBackendWebSocket } from '../../hooks/useBackendWebSocket';
-import { useNodeOperations } from './NodeOperations';
-import { NodeRecord } from '../../store/nodeSlice';
-import { useAppSelector } from '../../store/storeHook';
-import { RootState } from '../../store/store';
-import './style/ButtonsStyle.sass';
-import './style/NodeOperationsPanel.sass';
+import { useBackendWebSocket } from '../../../hooks/useBackendWebSocket.ts';
+import { useNodeOperations } from './NodeOperations.tsx';
+import { NodeRecord } from '../../../store/nodeSlice.ts';
+import { useAppSelector } from '../../../store/storeHook.ts';
+import { RootState } from '../../../store/store.ts';
+import '../style/ButtonsStyle.sass';
+import '../style/NodeOperationsPanel.sass';
 
 interface NodeOperationsPanelProps {
     node: NodeRecord;

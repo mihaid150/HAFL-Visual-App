@@ -1,7 +1,7 @@
 import React from 'react';
-import { FedNodeType } from './FedNodes'; // Adjust the import path as needed
-import './style/ButtonsStyle.sass'
-import './style/LeftSidebar.sass'
+import { FedNodeType } from '../FedNodes.ts';
+import '../style/ButtonsStyle.sass'
+import '../style/LeftSidebar.sass'
 
 interface SidebarProps {
     onSaveTopology: () => void;

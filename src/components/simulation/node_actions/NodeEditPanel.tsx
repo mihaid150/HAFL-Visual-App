@@ -1,8 +1,8 @@
-// src/components/network/NodeEditPanel.tsx
+// src/components/simulation/node_actions/NodeEditPanel.tsx
 import React, { useState } from 'react';
-import { useAppDispatch } from '../../store/storeHook';
-import { NodeRecord } from '../../store/nodeSlice';
-import './style/NodeEditPanel.sass';
+import { useAppDispatch } from '../../../store/storeHook.ts';
+import { NodeRecord } from '../../../store/nodeSlice.ts';
+import '../style/NodeEditPanel.sass';
 
 interface NodeEditPanelProps {
     node: NodeRecord;

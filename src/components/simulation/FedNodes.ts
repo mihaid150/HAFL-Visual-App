@@ -1,4 +1,4 @@
-// FedNodes.ts
+// src/components/simulationFedNodes.ts
 
 // Define the node type enum to match your Python reference.
 export enum FedNodeType {

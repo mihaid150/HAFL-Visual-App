@@ -1,5 +1,5 @@
 import { ReactFlowProvider } from 'reactflow';
-import FlowChart from './FlowChart';
+import FlowChart from './FlowChart.tsx';
 
 const FlowChartWrapper = () => (
     <ReactFlowProvider>

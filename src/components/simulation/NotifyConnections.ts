@@ -1,7 +1,7 @@
-// src/components/network/NotifyConnections.ts
+// src/components/simulation/NotifyConnections.ts
 import {Edge} from 'reactflow';
-import {sendOperationToUrl} from '../../hooks/useBackendWebSocket';
-import {NodeRecord, updateNode} from '../../store/nodeSlice';
+import {sendOperationToUrl} from '../../hooks/useBackendWebSocket.ts';
+import {NodeRecord, updateNode} from '../../store/nodeSlice.ts';
 import {AppDispatch} from "../../store/store.ts";
 
 export const notifyParents = (

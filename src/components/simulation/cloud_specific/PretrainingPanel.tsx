@@ -1,9 +1,9 @@
-// src/components/flowchart/PretrainingPanel.tsx
+// src/components/simulation/cloud_specific/PretrainingPanel.tsx
 import React, { useState } from 'react';
-import { useBackendWebSocket } from '../../hooks/useBackendWebSocket';
-import './style/ButtonsStyle.sass'
-import './style/PretrainingPanel.sass'
-import { useCloudNode } from './CloudNodeContext';
+import { useBackendWebSocket } from '../../../hooks/useBackendWebSocket.ts';
+import '../style/ButtonsStyle.sass'
+import '../style/PretrainingPanel.sass'
+import { useCloudNode } from './CloudNodeContext.tsx';
 
 interface PretrainingPanelProps {
     onClose: () => void;

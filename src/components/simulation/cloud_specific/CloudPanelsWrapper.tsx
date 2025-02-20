@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import PretrainingPanel from './PretrainingPanel';
-import TrainingPanel from './TrainingPanel';
-import './style/ButtonsStyle.sass';
-import CloudNodeContext from './CloudNodeContext';
+import PretrainingPanel from './PretrainingPanel.tsx';
+import TrainingPanel from './TrainingPanel.tsx';
+import '../style/ButtonsStyle.sass';
+import CloudNodeContext from './CloudNodeContext.tsx';
 
 interface CloudPanelsWrapperProps {
     ip_address: string;

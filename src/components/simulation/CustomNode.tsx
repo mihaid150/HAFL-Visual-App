@@ -1,7 +1,7 @@
 // src/components/flowchart/CustomNode.tsx
 import React, { useState, useRef } from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
-import { FedNodeType } from './FedNodes';
+import { FedNodeType } from './FedNodes.ts';
 import CancelIcon from '../../assets/icons8-cancel.svg';
 import ConfigIcon from '../../assets/icons8-config.svg';
 import OperationsIcon from '../../assets/icons8-bulb.svg';

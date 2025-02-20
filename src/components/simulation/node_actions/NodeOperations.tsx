@@ -1,8 +1,8 @@
-// src/components/network/NodeOperations.ts
-import {updateNode} from "../../store/nodeSlice";
-import {useAppDispatch} from "../../store/storeHook";
-import { sendOperationToUrl } from '../../hooks/useBackendWebSocket';
-import './style/ButtonsStyle.sass'
+// src/components/simulation/node_actions/NodeOperations.ts
+import {updateNode} from "../../../store/nodeSlice.ts";
+import {useAppDispatch} from "../../../store/storeHook.ts";
+import { sendOperationToUrl } from '../../../hooks/useBackendWebSocket.ts';
+import '../style/ButtonsStyle.sass'
 
 export const useNodeOperations = (id: string, nodeType: number, localLabel: string, localIp: string, localPort: number,
                                   sendOperation: (operation: string, data: unknown) => Promise<unknown>, backendId: string,
