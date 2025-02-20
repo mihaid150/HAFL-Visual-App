@@ -23,7 +23,7 @@ import './style/ButtonsStyle.sass';
 import NodeEditPanel from './NodeEditPanel';
 import NodeOperationsPanel from './NodeOperationsPanel';
 import { notifyParents, notifyChildren, fetchNodesConnections, executeNodesInitialization } from './NotifyConnections';
-import CloudInitPanel from "./CloudInitPanel.tsx";
+import CloudPanelsWrapper from "./CloudPanelsWrapper.tsx";
 
 const nodeTypes = { custom: CustomNode };
 
@@ -66,8 +66,8 @@ const FlowChart: React.FC = () => {
             },
             onCloudInitRequested: n.node_type === FedNodeType.CLOUD_NODE
                 ? () => setRightSidebarContent(
-                    <CloudInitPanel
-                        ip_address={n.ip_address}
+                    <CloudPanelsWrapper
+                    ip_address={n.ip_address}
                         port={n.port}
                         onClose={() => setRightSidebarContent(null)}
                     />

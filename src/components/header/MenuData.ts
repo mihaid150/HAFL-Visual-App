@@ -10,11 +10,6 @@ const menuData: MenuItem[] = [
         title: "Simulation",
         path: "/simulation",
     },
-    {
-        id: 2,
-        title: "Network",
-        path: "/network",
-    }
 ];
 
 export default menuData;
