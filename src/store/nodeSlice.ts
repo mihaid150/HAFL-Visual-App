@@ -12,7 +12,7 @@ export interface NodeRecord {
     flowchart_position: { x: number; y: number };
     parentId?: string;
     childrenIds?: string[];
-    sendOperation?: (operation: string, data: unknown) => Promise<unknown>; // Add this line
+    sendOperation?: (operation: string, data: unknown) => Promise<unknown>;
 }
 
 
