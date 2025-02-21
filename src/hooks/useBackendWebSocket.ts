@@ -1,9 +1,10 @@
 // src/hooks/useBackendWebSocket.ts
-import { useState, useEffect, useRef } from 'react';
+import {useState, useEffect, useRef, useCallback} from 'react';
 
 export const useBackendWebSocket = (url: string) => {
     const wsRef = useRef<WebSocket | null>(null);
     const [lastMessage, setLastMessage] = useState<unknown>(null);
+    const [connectionReady, setConnectionReady] = useState<boolean>(false);
 
     useEffect(() => {
         console.log("[WS] Attempting connection to:", url);
@@ -11,6 +12,7 @@ export const useBackendWebSocket = (url: string) => {
 
         wsRef.current.onopen = () => {
             console.log("[WS] Connected to backend websocket:", url);
+            setConnectionReady(true);
         };
 
         wsRef.current.onmessage = (event) => {
@@ -29,6 +31,7 @@ export const useBackendWebSocket = (url: string) => {
 
         wsRef.current.onclose = (event) => {
             console.log("[WS] WebSocket connection closed:", event);
+            setConnectionReady(false);
         };
 
         return () => {
@@ -37,7 +40,7 @@ export const useBackendWebSocket = (url: string) => {
         };
     }, [url]);
 
-    const sendOperation = (operation: string, data: unknown): Promise<unknown> => {
+    const sendOperation = useCallback((operation: string, data: unknown): Promise<unknown> => {
         return new Promise((resolve, reject) => {
             if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
                 console.error("[WS] Cannot send, WebSocket is not open. ReadyState:", wsRef.current?.readyState);
@@ -61,9 +64,10 @@ export const useBackendWebSocket = (url: string) => {
             wsRef.current.addEventListener("message", handleMessage, { once: true });
             wsRef.current.send(JSON.stringify(payload));
         });
-    };
+    }, []);
 
-    return { sendOperation, lastMessage };
+
+    return { sendOperation, lastMessage, connectionReady };
 };
 
 export const sendOperationToUrl = (
