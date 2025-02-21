@@ -6,6 +6,7 @@ import CancelIcon from '../../assets/icons8-cancel.svg';
 import ConfigIcon from '../../assets/icons8-config.svg';
 import OperationsIcon from '../../assets/icons8-bulb.svg';
 import StartIcon from '../../assets/icons8-start-100.png';
+import GeneticIcon from '../../assets/icons8-biotech-100.png'
 import "./style/CustomNode.sass";
 
 const CustomNode: React.FC<NodeProps> = ({ id, data }) => {
@@ -68,9 +69,14 @@ const CustomNode: React.FC<NodeProps> = ({ id, data }) => {
                 <button onClick={() => data.onRemove && data.onRemove(id)} className="button remove-button">
                     <img src={CancelIcon} alt="Remove" style={{width: '16px', height: '16px'}}/>
                 </button>
-                {data.node_type === FedNodeType.CLOUD_NODE && data.onCloudInitRequested && (
-                    <button onClick={data.onCloudInitRequested} className="button start-button">
-                        <img src={StartIcon} alt="Remove" style={{width: '16px', height: '16px'}}/>
+                {data.node_type === FedNodeType.CLOUD_NODE && data.onCloudTrainingInitializationRequested && (
+                    <button onClick={data.onCloudTrainingInitializationRequested} className="button start-button">
+                        <img src={StartIcon} alt="Cloud Training" style={{width: '16px', height: '16px'}}/>
+                    </button>
+                )}
+                {data.node_type === FedNodeType.FOG_NODE && data.onGeneticEngineConfigurationRequested && (
+                    <button onClick={data.onGeneticEngineConfigurationRequested} className="button start-button">
+                        <img src={GeneticIcon} alt="Genetic Configuration" style={{width: '16px', height: '16px'}}/>
                     </button>
                 )}
             </div>

@@ -24,6 +24,7 @@ import NodeEditPanel from './node_actions/NodeEditPanel.tsx';
 import NodeOperationsPanel from './node_actions/NodeOperationsPanel.tsx';
 import { notifyParents, notifyChildren, fetchNodesConnections, executeNodesInitialization } from './NotifyConnections.ts';
 import CloudPanelsWrapper from "./cloud_specific/CloudPanelsWrapper.tsx";
+import {FogPanelsWrapper} from "./fog_specific/FogPanelsWrapper.tsx";
 
 const nodeTypes = { custom: CustomNode };
 
@@ -64,13 +65,22 @@ const FlowChart: React.FC = () => {
             onOperationsRequested: () => {
                 setRightSidebarContent(<NodeOperationsPanel node={n} onClose={() => setRightSidebarContent(null)} />);
             },
-            onCloudInitRequested: n.node_type === FedNodeType.CLOUD_NODE
+            onCloudTrainingInitializationRequested: n.node_type === FedNodeType.CLOUD_NODE
                 ? () => setRightSidebarContent(
                     <CloudPanelsWrapper
                     ip_address={n.ip_address}
                         port={n.port}
                         onClose={() => setRightSidebarContent(null)}
                     />
+                )
+                : undefined,
+            onGeneticEngineConfigurationRequested: n.node_type === FedNodeType.FOG_NODE
+            ? () => setRightSidebarContent(
+                <FogPanelsWrapper
+                    ip_address={n.ip_address}
+                    port={n.port}
+                    onClose={() => setRightSidebarContent(null)}
+                />
                 )
                 : undefined,
         },
