@@ -1,29 +1,68 @@
-import React, { useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import '../style/ButtonsStyle.sass';
 import '../style/TrainingPanel.sass';
 import {useBackendWebSocket} from "../../../hooks/useBackendWebSocket.ts";
-import { useCloudNode } from './CloudNodeContext.tsx';
+import { useNodeContext } from '../NodeContext.tsx'
+
+interface TrainingParameters {
+    current_date: string;
+    is_cache_active: boolean;
+    genetic_strategy: string;
+}
 
 interface TrainingPanelProps {
     onClose: () => void;
 }
 
 const TrainingPanel: React.FC<TrainingPanelProps> = ({ onClose }) => {
-    const { ip_address, port } = useCloudNode();
+    const { ip_address, port } = useNodeContext();
     const wsUrl = `ws://${ip_address}:${port}/cloud/ws`;
-    const { sendOperation } = useBackendWebSocket(wsUrl);
+    const { sendOperation, connectionReady } = useBackendWebSocket(wsUrl);
 
-    const [currentDate, setCurrentDate] = useState(new Date().toISOString().split('T')[0]);
-    const [isCacheActive, setIsCacheActive] = useState(false);
-    const [geneticStrategy, setGeneticStrategy] = useState('');
+    const [trainingParams, setTrainingParams] = useState<TrainingParameters>({
+        current_date: '',
+        is_cache_active: false,
+        genetic_strategy: '',
+    });
+
+    const getCurrentParameters = useCallback(async () => {
+        try {
+            const response = await sendOperation("get_training_process_parameters", {});
+            if (response && typeof response === "object") {
+                setTrainingParams(response as TrainingParameters);
+            }
+        } catch (error: unknown) {
+            console.error("Error fetching training process parameters:", error);
+        }
+    }, [sendOperation]);
+
+    useEffect(() => {
+        const fetchParameters = async () => {
+            await getCurrentParameters();
+        };
+        if (connectionReady) {
+            void fetchParameters();
+        }
+    }, [getCurrentParameters, connectionReady]);
 
     const handleSubmit = async () => {
         try {
+            const stateResponse = await sendOperation("get_cloud_service_state", {});
+            if (!stateResponse || typeof stateResponse !== "object") {
+                alert("Invalid response from get_fog_service_state");
+                return;
+            }
+            const { cloud_service_state } = stateResponse as { cloud_service_state: number };
+
+            if (cloud_service_state !== 1) {
+                alert("Cloud Service is operational and cannot be configured. Wait until termination.");
+                return;
+            }
+
             const response = await sendOperation("initialize_cloud_training", {
-                end_date: currentDate,
-                is_cache_active: isCacheActive,
-                genetic_evaluation_strategy: geneticStrategy,
-                model_type: "model",
+                end_date: trainingParams.current_date,
+                is_cache_active: trainingParams.is_cache_active,
+                genetic_evaluation_strategy: trainingParams.genetic_strategy,
             });
             alert("Cloud training initialized: " + JSON.stringify(response));
             onClose();
@@ -40,16 +79,29 @@ const TrainingPanel: React.FC<TrainingPanelProps> = ({ onClose }) => {
                     Current Date:
                     <input
                         type="date"
-                        value={currentDate}
-                        onChange={(e) => setCurrentDate(e.target.value)}
+                        value={trainingParams.current_date}
+                        onChange={(e) =>
+                            setTrainingParams({
+                                ...trainingParams,
+                                current_date: e.target.value,
+                            })
+                        }
                     />
                 </label>
             </div>
             <div className="training-field">
                 <label>
                     Cache Active:
-                    <input type="checkbox" checked={isCacheActive}
-                           onChange={(e) => setIsCacheActive(e.target.checked)}/>
+                    <input
+                        type="checkbox"
+                        checked={trainingParams.is_cache_active}
+                        onChange={(e) =>
+                            setTrainingParams({
+                                ...trainingParams,
+                                is_cache_active: e.target.checked,
+                            })
+                        }
+                    />
                 </label>
             </div>
             <div className="training-field">
@@ -57,8 +109,14 @@ const TrainingPanel: React.FC<TrainingPanelProps> = ({ onClose }) => {
                     Genetic Strategy:
                     <input
                         type="text"
-                        value={geneticStrategy}
-                        onChange={(e) => setGeneticStrategy(e.target.value)}
+                        value={trainingParams.genetic_strategy}
+                        onChange={(e) =>
+                            setTrainingParams({
+                                ...trainingParams,
+                                genetic_strategy: e.target.value,
+                            })
+                        }
+                        placeholder="Genetic Strategy"
                     />
                 </label>
             </div>
