@@ -15,7 +15,7 @@ interface TrainingPanelProps {
 }
 
 const TrainingPanel: React.FC<TrainingPanelProps> = ({ onClose }) => {
-    const { ip_address, port } = useNodeContext();
+    const { ip_address, port, label } = useNodeContext();
     const wsUrl = `ws://${ip_address}:${port}/cloud/ws`;
     const { sendOperation, connectionReady } = useBackendWebSocket(wsUrl);
 
@@ -45,7 +45,7 @@ const TrainingPanel: React.FC<TrainingPanelProps> = ({ onClose }) => {
         }
     }, [getCurrentParameters, connectionReady]);
 
-    const handleSubmit = async () => {
+    const handleTrainingSubmit = async () => {
         try {
             const stateResponse = await sendOperation("get_cloud_service_state", {});
             if (!stateResponse || typeof stateResponse !== "object") {
@@ -71,8 +71,33 @@ const TrainingPanel: React.FC<TrainingPanelProps> = ({ onClose }) => {
         }
     };
 
+    const handleEvaluationSubmit = async () => {
+        try {
+            const stateResponse = await sendOperation("get_cloud_service_state", {});
+            if (!stateResponse || typeof stateResponse !== "object") {
+                alert("Invalid response from get_fog_service_state");
+                return;
+            }
+            const { cloud_service_state } = stateResponse as { cloud_service_state: number };
+
+            if (cloud_service_state !== 1) {
+                alert("Cloud Service is operational and cannot be configured. Wait until termination.");
+                return;
+            }
+
+            const response = await sendOperation("perform_model_evaluation", {
+                end_date: trainingParams.current_date,
+            });
+            alert("Cloud evaluation initialized: " + JSON.stringify(response));
+            onClose();
+        } catch (error: unknown) {
+            alert("Error: " + String(error));
+        }
+    };
+
     return (
         <div className="training-panel">
+            <h3>{label}</h3>
             <h3>Initialize Training Process</h3>
             <div className="training-field">
                 <label>
@@ -121,8 +146,11 @@ const TrainingPanel: React.FC<TrainingPanelProps> = ({ onClose }) => {
                 </label>
             </div>
             <div className="button-group">
-                <button className="green-button" onClick={handleSubmit}>
+                <button className="green-button" onClick={handleTrainingSubmit}>
                     Initialize Training Process
+                </button>
+                <button className="green-button" onClick={handleEvaluationSubmit}>
+                    Initialize Evaluation Process
                 </button>
                 <button className="red-button margin-left" onClick={onClose}>
                     Cancel
