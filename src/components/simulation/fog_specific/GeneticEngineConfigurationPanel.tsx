@@ -1,3 +1,5 @@
+// src/components/simulation/fog_specific/GeneticEngineConfigurationPanel.tsx
+
 import {useNodeContext} from "../NodeContext.tsx";
 import React, {useCallback, useEffect, useState} from "react";
 import {useBackendWebSocket} from "../../../hooks/useBackendWebSocket.ts";
@@ -14,7 +16,7 @@ interface GeneticEngineConfigurationPanelProps {
 }
 
 export const GeneticEngineConfigurationPanel: React.FC<GeneticEngineConfigurationPanelProps> = ({onClose}) => {
-    const {ip_address, port} = useNodeContext();
+    const {ip_address, port, label} = useNodeContext();
     const wsUrl = `ws://${ip_address}:${port}/fog/ws`;
     const {sendOperation, connectionReady} = useBackendWebSocket(wsUrl);
 
@@ -73,6 +75,7 @@ export const GeneticEngineConfigurationPanel: React.FC<GeneticEngineConfiguratio
 
     return (
         <div className="genetic-engine-conf-panel">
+            <h3>{label}</h3>
             <h3>Configure Genetic Engine</h3>
             <div className="population-size-field">
                 <label>
@@ -97,10 +100,10 @@ export const GeneticEngineConfigurationPanel: React.FC<GeneticEngineConfiguratio
                         type="number"
                         value={geneticEngineParams.number_of_generations}
                         onChange={(e) =>
-                        setGeneticEngineParams({
-                            ...geneticEngineParams,
-                            number_of_generations: parseInt(e.target.value),
-                        })
+                            setGeneticEngineParams({
+                                ...geneticEngineParams,
+                                number_of_generations: parseInt(e.target.value),
+                            })
                         }
                         placeholder="Number of Generations"
                     />
@@ -113,10 +116,10 @@ export const GeneticEngineConfigurationPanel: React.FC<GeneticEngineConfiguratio
                         type="number"
                         value={geneticEngineParams.stagnation_limit}
                         onChange={(e) =>
-                        setGeneticEngineParams({
-                            ...geneticEngineParams,
-                            stagnation_limit: parseInt(e.target.value),
-                        })
+                            setGeneticEngineParams({
+                                ...geneticEngineParams,
+                                stagnation_limit: parseInt(e.target.value),
+                            })
                         }
                         placeholder="Stagnation Limit"
                     />

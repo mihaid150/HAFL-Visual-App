@@ -1,6 +1,7 @@
 import {useNodeContext} from "../NodeContext.tsx";
 import React, {useCallback, useEffect, useState} from "react";
 import {useBackendWebSocket} from "../../../hooks/useBackendWebSocket.ts";
+import '../style/TrainingParametersPanel.sass';
 
 interface TrainingParameters {
     learning_rate_lower_bound: number;
@@ -20,7 +21,7 @@ interface TrainingParametersPanelProps {
 }
 
 export const TrainingParametersPanel: React.FC<TrainingParametersPanelProps> = ({onClose}) => {
-    const {ip_address, port} = useNodeContext();
+    const {ip_address, port, label} = useNodeContext();
     const wsUrl = `ws://${ip_address}:${port}/fog/ws`;
     const {sendOperation, connectionReady} = useBackendWebSocket(wsUrl);
 
@@ -96,20 +97,21 @@ export const TrainingParametersPanel: React.FC<TrainingParametersPanelProps> = (
 
     return (
         <div className="training-parameters-conf-panel">
-            <h3>Learning Hyper-parameters Configuration</h3>
-            <div className="number-field">
-                <label>
-                    Learning Rate Bounds:
+            <h3>{label}</h3>
+            <h3>Hyper-parameters Configuration</h3>
+            <div className="parameter-group">
+                <div className="group-label">Learning Rate Bounds:</div>
+                <div className="group-inputs">
                     <input
                         type="number"
                         value={trainingParams.learning_rate_lower_bound}
                         onChange={(e) =>
                             setTrainingParams({
-                            ...trainingParams,
-                            learning_rate_lower_bound: parseInt(e.target.value),
+                                ...trainingParams,
+                                learning_rate_lower_bound: parseInt(e.target.value),
                             })
                         }
-                        placeholder="Learning Rate Lower Bound"
+                        placeholder="Lower Bound"
                     />
                     <input
                         type="number"
@@ -120,13 +122,13 @@ export const TrainingParametersPanel: React.FC<TrainingParametersPanelProps> = (
                                 learning_rate_upper_bound: parseInt(e.target.value),
                             })
                         }
-                        placeholder="Learning Rate Upper Bound"
+                        placeholder="Upper Bound"
                     />
-                </label>
+                </div>
             </div>
-            <div className="number-field">
-                <label>
-                    Batch Size Bounds:
+            <div className="parameter-group">
+                <div className="group-label">Batch Size Bounds:</div>
+                <div className="group-inputs">
                     <input
                         type="number"
                         value={trainingParams.batch_size_lower_bound}
@@ -136,7 +138,7 @@ export const TrainingParametersPanel: React.FC<TrainingParametersPanelProps> = (
                                 batch_size_lower_bound: parseInt(e.target.value),
                             })
                         }
-                        placeholder="Batch Size Lower Bound"
+                        placeholder="Lower Bound"
                     />
                     <input
                         type="number"
@@ -147,13 +149,13 @@ export const TrainingParametersPanel: React.FC<TrainingParametersPanelProps> = (
                                 batch_size_upper_bound: parseInt(e.target.value),
                             })
                         }
-                        placeholder="Batch Size Upper Bound"
+                        placeholder="Upper Bound"
                     />
-                </label>
+                </div>
             </div>
-            <div className="number-field">
-                <label>
-                    Epochs Bounds:
+            <div className="parameter-group">
+                <div className="group-label">Epochs Bounds:</div>
+                <div className="group-inputs">
                     <input
                         type="number"
                         value={trainingParams.epochs_lower_bound}
@@ -163,7 +165,7 @@ export const TrainingParametersPanel: React.FC<TrainingParametersPanelProps> = (
                                 epochs_lower_bound: parseInt(e.target.value),
                             })
                         }
-                        placeholder="Epochs Lower Bound"
+                        placeholder="Lower Bound"
                     />
                     <input
                         type="number"
@@ -174,13 +176,13 @@ export const TrainingParametersPanel: React.FC<TrainingParametersPanelProps> = (
                                 epochs_upper_bound: parseInt(e.target.value),
                             })
                         }
-                        placeholder="Epochs Upper Bound"
+                        placeholder="Upper Bound"
                     />
-                </label>
+                </div>
             </div>
-            <div className="number-field">
-                <label>
-                    Patience Bounds:
+            <div className="parameter-group">
+                <div className="group-label">Patience Bounds:</div>
+                <div className="group-inputs">
                     <input
                         type="number"
                         value={trainingParams.patience_lower_bound}
@@ -190,7 +192,7 @@ export const TrainingParametersPanel: React.FC<TrainingParametersPanelProps> = (
                                 patience_lower_bound: parseInt(e.target.value),
                             })
                         }
-                        placeholder="Patience Lower Bound"
+                        placeholder="Lower Bound"
                     />
                     <input
                         type="number"
@@ -201,13 +203,13 @@ export const TrainingParametersPanel: React.FC<TrainingParametersPanelProps> = (
                                 patience_upper_bound: parseInt(e.target.value),
                             })
                         }
-                        placeholder="Patience Upper Bound"
+                        placeholder="Upper Bound"
                     />
-                </label>
+                </div>
             </div>
-            <div className="number-field">
-                <label>
-                    Fine Tune Layers Bounds:
+            <div className="parameter-group">
+                <div className="group-label">Fine Tune Layers Bounds:</div>
+                <div className="group-inputs">
                     <input
                         type="number"
                         value={trainingParams.fine_tune_layers_lower_bound}
@@ -217,7 +219,7 @@ export const TrainingParametersPanel: React.FC<TrainingParametersPanelProps> = (
                                 fine_tune_layers_lower_bound: parseInt(e.target.value),
                             })
                         }
-                        placeholder="Fine Tune Layers Lower Bound"
+                        placeholder="Lower Bound"
                     />
                     <input
                         type="number"
@@ -228,9 +230,9 @@ export const TrainingParametersPanel: React.FC<TrainingParametersPanelProps> = (
                                 fine_tune_layers_upper_bound: parseInt(e.target.value),
                             })
                         }
-                        placeholder="Fine Tune Layers Upper Bound"
+                        placeholder="Upper Bound"
                     />
-                </label>
+                </div>
             </div>
             <div className="button-group">
                 <button className="green-button" onClick={handleSubmit}>
