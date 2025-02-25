@@ -18,7 +18,7 @@ interface PretrainingPanelProps {
 }
 
 const PretrainingPanel: React.FC<PretrainingPanelProps> = ({ onClose }) => {
-    const { ip_address, port } = useNodeContext();
+    const { ip_address, port, label } = useNodeContext();
     const wsUrl = `ws://${ip_address}:${port}/cloud/ws`;
     const { sendOperation, connectionReady } = useBackendWebSocket(wsUrl);
 
@@ -80,6 +80,7 @@ const PretrainingPanel: React.FC<PretrainingPanelProps> = ({ onClose }) => {
 
     return (
         <div className="pretraining-panel">
+            <h3>{label}</h3>
             <h3>Initialize Pretraining Process</h3>
             <div className="pretraining-field">
                 <label>

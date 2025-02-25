@@ -3,6 +3,7 @@ import { createContext, useContext } from 'react';
 interface NodeContextProps {
     ip_address: string;
     port: number;
+    label: string;
 }
 
 export const NodeContext = createContext<NodeContextProps | undefined>(undefined);

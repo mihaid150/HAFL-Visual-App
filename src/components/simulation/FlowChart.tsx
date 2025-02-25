@@ -68,8 +68,9 @@ const FlowChart: React.FC = () => {
             onCloudTrainingInitializationRequested: n.node_type === FedNodeType.CLOUD_NODE
                 ? () => setRightSidebarContent(
                     <CloudPanelsWrapper
-                    ip_address={n.ip_address}
+                        ip_address={n.ip_address}
                         port={n.port}
+                        label={n.label}
                         onClose={() => setRightSidebarContent(null)}
                     />
                 )
@@ -79,6 +80,7 @@ const FlowChart: React.FC = () => {
                 <FogPanelsWrapper
                     ip_address={n.ip_address}
                     port={n.port}
+                    label={n.label}
                     onClose={() => setRightSidebarContent(null)}
                 />
                 )

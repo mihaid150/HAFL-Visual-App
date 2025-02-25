@@ -8,6 +8,7 @@ import {useBackendWebSocket} from "../../../hooks/useBackendWebSocket.ts";
 interface CloudPanelsWrapperProps {
     ip_address: string;
     port: number;
+    label: string;
     onClose: () => void;
 }
 
@@ -15,7 +16,7 @@ interface FederatedSimulationStateResponse {
     federated_simulation_state: number;
 }
 
-const CloudPanelsWrapper: React.FC<CloudPanelsWrapperProps> = ({ip_address, port, onClose,
+const CloudPanelsWrapper: React.FC<CloudPanelsWrapperProps> = ({ip_address, port, label, onClose,
                                                                }) => {
     const [activePanel, setActivePanel] = useState<'pretraining' | 'training'>('pretraining');
     const wsUrl = `ws://${ip_address}:${port}/cloud/ws`;
@@ -45,7 +46,7 @@ const CloudPanelsWrapper: React.FC<CloudPanelsWrapperProps> = ({ip_address, port
     };
 
     return (
-        <NodeContext.Provider value={{ ip_address, port }}>
+        <NodeContext.Provider value={{ ip_address, port, label }}>
             <div>
                 {activePanel === 'pretraining' ? (
                     <PretrainingPanel onClose={onClose} />
