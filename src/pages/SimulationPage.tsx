@@ -2,6 +2,7 @@ import React from "react";
 import FlowChartWrapper from "../components/simulation/FlowChartWrapper.tsx";
 import "./SimulationPage.sass"
 import TutorialInfo from "../components/tutorial/TutorialInfo.tsx";
+import PerformanceChart from "../components/simulation/chart/PerformanceChart.tsx";
 
 const SimulationPage: React.FC = () => {
     return (
@@ -11,7 +12,10 @@ const SimulationPage: React.FC = () => {
             <div className="flowchart-container bg-white p-4 rounded shadow">
                 <FlowChartWrapper/>
             </div>
-            <TutorialInfo />
+            <br/>
+            <PerformanceChart />
+            <br/>
+            <TutorialInfo/>
         </div>
     );
 };
