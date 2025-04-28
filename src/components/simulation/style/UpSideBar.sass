@@ -1,0 +1,48 @@
+@use "sass:color"
+
+// Container for the status upbar
+.upside-bar
+  display: flex
+  align-items: center
+  padding: 8px
+  border-bottom: 1px solid #ccc
+  background-color: #ffffff
+
+  // When the upbar should show an informational status (success/green)
+  &.status-success
+    background-color: #d4edda
+
+  // When the upbar should show a warning status (yellow)
+  &.status-warning
+    background-color: #fff3cd
+
+  // When the upbar should show an error status (red)
+  &.status-error
+    background-color: #f8d7da
+
+// Style for the central message area
+.status-message
+  flex-grow: 1
+  text-align: center
+  margin: 0 10px
+
+// Style for the navigation and clear buttons
+.back-button, .forward-button, .clear-button, .clear-all-button
+  background-color: #6db1ff
+  color: #fff
+  border: none
+  border-radius: 4px
+  cursor: pointer
+  padding: 6px 12px
+  margin: 0 4px
+  transition: background-color 0.2s ease, transform 0.1s ease
+
+  &:hover
+    background-color: color.adjust(#6db1ff, $lightness: -10%)
+
+  &:active
+    transform: scale(0.98)
+
+  &:disabled
+    opacity: 0.6
+    cursor: not-allowed

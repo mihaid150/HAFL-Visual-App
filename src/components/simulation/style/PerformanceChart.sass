@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap')
+
+.performance-chart
+  padding: 1rem
+
+  .controls
+    margin-bottom: 1rem
+
+    // Style for the "Search Performance Metrics" button
+    button
+      background-color: #28a745
+      border: none
+      color: #fff
+      padding: 0.5rem 1rem
+      border-radius: 4px
+      font-size: 1rem
+      cursor: pointer
+      margin-right: 1rem
+      transition: background-color 0.3s ease
+      &:hover
+        background-color: #218838
+      &:focus
+        outline: none
+        box-shadow: 0 0 0 2px rgba(33,138,54,0.5)
+
+    label
+      margin-right: 1rem
+
+    // Common styling for dropdowns
+    select
+      width: 250px
+      height: 40px
+      padding: 0.5rem 1rem
+      border: 1px solid #ccc
+      border-radius: 4px
+      font-size: 1rem
+      background-color: #fff
+      color: #333
+      cursor: pointer
+      appearance: none
+      background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D'10'%20height%3D'7'%20viewBox%3D'0%200%2010%207'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%3E%3Cpath%20d%3D'M0%200l5%207%205-7z'%20fill%3D'%23333'%20/%3E%3C/svg%3E")
+      background-repeat: no-repeat
+      background-position: right 0.75rem center
+      background-size: 0.65rem auto
+      &:focus
+        outline: none
+        border-color: #007bff
+
+    // Specific styling for the extra edge node dropdown
+    select#edgeSelect
+      margin-left: 1rem
+
+    .continuous-fetch
+      margin-left: 1rem
+
+    // New styling for date filtering controls
+    .date-filter
+      margin-top: 1rem
+      display: flex
+      align-items: center
+
+      label
+        margin-right: 0.5rem
+
+      input[type="date"]
+        width: auto
+        height: 40px
+        padding: 0.5rem
+        border: 1px solid #ccc
+        border-radius: 4px
+        font-size: 1rem
+        margin-right: 1rem
+
+      button
+        background-color: #007bff
+        border: none
+        color: #fff
+        padding: 0.5rem 1rem
+        border-radius: 4px
+        font-size: 1rem
+        cursor: pointer
+        margin-right: 0.5rem
+        transition: background-color 0.3s ease
+        &:hover
+          background-color: #0069d9
+        &:focus
+          outline: none
+          box-shadow: 0 0 0 2px rgba(0,123,255,0.5)
+
+    // Specific styling for the "Save Chart as Image" button
+    .save-chart
+      margin-top: 1rem
+
+  .chart-wrapper
+    padding: 1rem
+    background-color: #ffffff
+    border-radius: 8px
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)
+    margin: 0 auto
+
+    .chart-container
+      width: 1200px
+      height: 700px
+      margin: 0 auto
+
+      // Ensure the canvas fills the container
+      canvas
+        width: 100% !important
+        height: 100% !important

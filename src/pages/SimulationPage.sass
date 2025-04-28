@@ -1,0 +1,110 @@
+// Utility classes
+.p-6
+  padding: 1.5rem
+
+.text-2xl
+  font-size: 1.5rem
+  line-height: 2rem
+
+.font-semibold
+  font-weight: 600
+
+.center
+  text-align: center
+
+// Optionally, style the h2 element directly
+h2
+  margin-bottom: 1rem
+
+// Main simulation page styling
+.simulation-page
+  display: flex
+  flex-direction: column
+  align-items: center
+  padding: 1.5rem
+
+  h2
+    text-align: center
+    margin-bottom: 1rem
+  // TODO: to be absolute measures because now depends on screen resolution
+  // Flowchart container styling
+  .flowchart-container
+    width: 100vw           // 80% of the viewport width
+    max-width: 1600px
+    margin: 0 auto        // center horizontally
+    background-color: #ffffff
+    border-radius: 8px
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)
+
+  .tutorial-info
+    width: 80vw
+    max-width: 1600px
+    margin: 1.5rem auto 0
+    background-color: #f3f3f3
+    padding: 1.5rem
+    border-radius: 8px
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)
+    text-align: left
+    line-height: 1.6
+
+    h3
+      text-align: center
+      margin-bottom: 1.25rem
+      font-size: 1.5rem
+      font-weight: bold
+
+    p
+      margin-bottom: 1.25rem
+
+    ul
+      margin: 1rem 0
+      padding-left: 1.5rem
+
+      li
+        margin-bottom: 0.75rem
+
+    .toggle-button
+      display: block
+      margin: 1rem auto
+      padding: 0.5rem 1rem
+      font-size: 1rem
+      font-weight: 600
+      color: #fff
+      background-color: #007bff
+      border: none
+      border-radius: 4px
+      cursor: pointer
+      transition: background-color 0.3s ease
+      &:hover
+        background-color: #0056b3
+
+    .dataflow-steps
+      margin-top: 2rem
+
+      .dataflow-title
+        font-size: 1.25rem
+        font-weight: bold
+        text-align: center
+        margin-bottom: 1rem
+
+      .steps-list
+        list-style: decimal
+        padding-left: 2rem
+
+        .step-item
+          margin-bottom: 1rem
+
+          .step-title
+            font-size: 1.1rem
+            font-weight: 600
+            margin-bottom: 0.5rem
+
+          .step-description
+            font-size: 0.95rem
+            color: #555
+
+.button-group
+  display: flex
+  justify-content: center
+  gap: 1rem
+  margin-top: 1rem

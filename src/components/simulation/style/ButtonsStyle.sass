@@ -1,0 +1,67 @@
+// src/components/network/style/ButtonsStyles.sass
+
+@use "sass:color"
+
+
+.green-button
+  background-color: color.adjust(#27ae60, $lightness: -10%)
+  color: #fff
+  border: none
+  border-radius: 4px
+  cursor: pointer
+  padding: 6px 12px
+  margin-bottom: 10px
+  transition: background-color 0.2s ease, transform 0.1s ease
+
+  &:hover
+    background-color: color.adjust(#27ae60, $lightness: -10%)
+
+  &:active
+    transform: scale(0.98)
+
+  &:disabled
+    opacity: 0.6
+    cursor: not-allowed
+
+.red-button
+  background-color: #fe7070
+  color: #fff
+  border: none
+  border-radius: 4px
+  cursor: pointer
+  padding: 6px 12px
+  margin-bottom: 10px
+  transition: background-color 0.2s ease, transform 0.1s ease
+
+  &:hover
+    background-color: color.adjust(#fe7070, $lightness: -10%)
+
+  &:active
+    transform: scale(0.98)
+
+  &:disabled
+    opacity: 0.6
+    cursor: not-allowed
+
+.blue-button
+  background-color: #6db1ff
+  color: #fff
+  border: none
+  border-radius: 4px
+  cursor: pointer
+  padding: 6px 12px
+  margin-bottom: 10px
+  transition: background-color 0.2s ease, transform 0.1s ease
+
+  &:hover
+    background-color: color.adjust(#6db1ff, $lightness: -10%)
+
+  &:active
+    transform: scale(0.98)
+
+  &:disabled
+    opacity: 0.6
+    cursor: not-allowed
+
+.margin-left
+  margin-left: 4px

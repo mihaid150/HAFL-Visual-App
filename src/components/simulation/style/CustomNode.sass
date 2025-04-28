@@ -1,0 +1,74 @@
+// src/components/network/CustomNode.sass
+
+.custom-node
+  position: relative
+  padding: 10px
+  border: 1px solid #777
+  border-radius: 5px
+  color: #000
+  min-width: 100px
+  min-height: 60px
+  text-align: center
+  transition: box-shadow 0.2s ease
+
+  // Enhance with a subtle shadow on hover
+  &:hover
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2)
+
+  // Use additional classes to set background based on node type
+  &.cloud-node
+    background-color: #ADD8E6
+  &.fog-node
+    background-color: #FFA500
+  &.edge-node
+    background-color: #90EE90
+  &.default-node
+    background-color: #fff
+
+.node-label
+  margin-bottom: 8px
+  font-weight: bold
+
+.button-group
+  display: flex
+  justify-content: center
+  gap: 8px
+  margin-top: 8px
+
+.button
+  border: none
+  border-radius: 4px
+  cursor: pointer
+  padding: 4px 8px
+  transition: background-color 0.2s ease, transform 0.1s ease
+  display: flex
+  align-items: center
+  justify-content: center
+
+  &:hover
+    transform: scale(1.05)
+
+  &:active
+    transform: scale(0.95)
+
+.edit-button
+  background-color: #6db1ff
+  color: #fff
+
+.remove-button
+  background-color: #fe7070
+  color: #fff
+
+.start-button
+  background-color: #fff7a1
+  color: #fff
+
+.operations-button
+  background-color: #9391ff
+  color: #fff
+
+.handle
+  background-color: #555
+  width: 10px
+  height: 10px
+  border-radius: 50%

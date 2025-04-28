@@ -1,0 +1,78 @@
+// src/components/network/NodeEditPanel.sass
+@use "sass:color"
+
+.node-edit-panel
+  padding: 1rem
+  background-color: #fff
+  border: 1px solid #ccc
+  border-radius: 8px
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)
+  max-width: 400px
+  margin: 1rem auto
+  transition: transform 0.2s ease
+
+  &:hover
+    transform: translateY(-2px)
+
+.node-edit-header
+  font-size: 1.25rem
+  font-weight: bold
+  text-align: center
+  margin-bottom: 1rem
+
+.node-edit-field
+  margin-bottom: 1rem
+
+  label
+    display: block
+    font-weight: 600
+    margin-bottom: 0.5rem
+
+  input
+    width: 100%
+    padding: 0.5rem
+    border: 1px solid #ccc
+    border-radius: 4px
+    transition: border-color 0.2s ease
+
+    &:focus
+      border-color: #27ae60
+      outline: none
+
+.button-group
+  display: flex
+  justify-content: space-between
+  gap: 1rem
+
+.green-button
+  background-color: #27ae60
+  color: #fff
+  border: none
+  border-radius: 4px
+  padding: 0.5rem 1rem
+  cursor: pointer
+  transition: background-color 0.2s ease, transform 0.1s ease
+
+  &:hover
+    background-color: color.adjust(#27ae60, $lightness: -10%)
+
+  &:active
+    transform: scale(0.98)
+
+.red-button
+  background-color: #fe7070
+  color: #fff
+  border: none
+  border-radius: 4px
+  padding: 0.5rem 1rem
+  cursor: pointer
+  transition: background-color 0.2s ease, transform 0.1s ease
+
+  &:hover
+    background-color: color.adjust(#fe7070, $lightness: -10%)
+
+  &:active
+    transform: scale(0.98)
+
+.margin-left
+  margin-left: 1rem
