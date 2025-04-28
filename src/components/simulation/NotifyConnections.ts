@@ -3,6 +3,7 @@ import {Edge} from 'reactflow';
 import {sendOperationToUrl} from '../../hooks/useBackendWebSocket.ts';
 import {NodeRecord, updateNode} from '../../store/nodeSlice.ts';
 import {AppDispatch} from "../../store/store.ts";
+import {FedNodeType} from "./FedNodes.ts";
 
 export const notifyParents = (
     reduxNodes: NodeRecord[],
@@ -101,9 +102,11 @@ export const fetchNodesConnections = async (
             if (typeof response === "object" && response !== null && "node" in response) {
                 const nodeInfo = response as {
                     message: string;
-                    node: { id: string; name: string; type: number; ip_address: string; port: number };
+                    node: { id: string; name: string; type: number; ip_address: string; port: number,
+                        device_mac: string };
                 };
-                dispatch(updateNode({localId: node.localId, changes: {backedId: nodeInfo.node.id}}));
+                dispatch(updateNode({localId: node.localId, changes: {backedId: nodeInfo.node.id,
+                        device_mac: nodeInfo.node.device_mac}}));
             }
         } catch (error) {
             console.error(`Error fetching node info for node ${node.localId}:`, error);
@@ -126,15 +129,16 @@ export const executeNodesInitialization = async (
                     ip_address: node.ip_address,
                     port: node.port,
                 });
-
                 if (typeof response === "object" && response !== null && "node" in response) {
                     isNodeInitialize[node.label] = true;
 
                     const nodeInfo = response as {
                         message: string;
-                        node: { id: string; name: string; type: number; ip_address: string; port: number };
+                        node: { id: string; name: string; type: number; ip_address: string; port: number,
+                            device_mac: string};
                     };
-                    dispatch(updateNode({localId: node.localId, changes: {backedId: nodeInfo.node.id}}));
+                    dispatch(updateNode({localId: node.localId, changes: {backedId: nodeInfo.node.id,
+                            device_mac: nodeInfo.node.device_mac}}));
                 } else {
                     isNodeInitialize[node.label] = false;
                 }
@@ -151,4 +155,85 @@ export const executeNodesInitialization = async (
     } else {
         alert("There was a problem initializing all the nodes.");
     }
+}
+
+export const executeClearCloudResults = async (
+    reduxNodes: NodeRecord[]) => {
+    const cloudNode = reduxNodes.filter((node) => node.node_type === FedNodeType.CLOUD_NODE)[0];
+    const wsUrl = `ws://${cloudNode.ip_address}:${cloudNode.port}/cloud/ws`;
+
+    const response = await sendOperationToUrl(wsUrl, "clear_cloud_results", {});
+    if (typeof response === "object" && response !== null && "message" in response) {
+        const nodeInfo = response as {
+            message: string;
+        }
+        alert(nodeInfo.message);
+    }
+    else {
+        alert("Error clearing the cloud results.");
+    }
+}
+
+export const recordNodesToCloudDb = (reduxNodes: NodeRecord[]) => {
+    // Build the list of nodes to record:
+
+    const nodesToRecord = get_structured_nodes(reduxNodes);
+
+    // Find the cloud node to which we will send the operation.
+    const cloudNode = reduxNodes.find((node) => node.node_type === FedNodeType.CLOUD_NODE);
+    if (!cloudNode) {
+        console.error("Cloud node not found");
+        return;
+    }
+
+    // Construct the WebSocket URL for the cloud node.
+    const wsUrl = `ws://${cloudNode.ip_address}:${cloudNode.port}/cloud/ws`;
+
+    // Send the operation using sendOperationToUrl.
+    sendOperationToUrl(wsUrl, "record_nodes_to_cloud_db", nodesToRecord)
+        .then((response) => {
+            console.log("Recorded nodes:", response);
+        })
+        .catch((err) => {
+            console.error("Error recording nodes:", err);
+        });
+};
+
+export const update_node_records = (reduxNodes: NodeRecord[]) => {
+    // Build the list of nodes to record:
+
+    const nodesToRecord = get_structured_nodes(reduxNodes);
+
+    // Find the cloud node to which we will send the operation.
+    const cloudNode = reduxNodes.find((node) => node.node_type === FedNodeType.CLOUD_NODE);
+    if (!cloudNode) {
+        console.error("Cloud node not found");
+        return;
+    }
+
+    // Construct the WebSocket URL for the cloud node.
+    const wsUrl = `ws://${cloudNode.ip_address}:${cloudNode.port}/cloud/ws`;
+
+    // Send the operation using sendOperationToUrl.
+    sendOperationToUrl(wsUrl, "update_node_records_and_relink_ids", nodesToRecord)
+        .then((response) => {
+            console.log("Updated recorded nodes:", response);
+        })
+        .catch((err) => {
+            console.error("Error recording nodes:", err);
+        });
+};
+
+export const get_structured_nodes = (reduxNodes: NodeRecord[]) => {
+    return  reduxNodes.map((node) => {
+        // Look up the parent node using node.parentId.
+        const parent = reduxNodes.find((n) => n.backedId === node.parentId);
+        return {
+            id: node.backedId || null,            // backend id (or null if not available)
+            label: node.label,
+            parent_id: node.parentId || null,       // parent's local id (or null)
+            parent_label: parent ? parent.label : null, // parent's label, if found
+            device_mac: node.device_mac,
+        };
+    });
 }

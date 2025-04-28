@@ -41,31 +41,41 @@ const TutorialInfo: React.FC = () => {
                     <ol className="steps-list">
                         <li className="step-item">
                             <h5 className="step-title">Step 1: Network Building</h5>
-                            <p className="step-description">
+                            <div className="step-description">
                                 <ul>
-                                    Drag and drop nodes from the left side bar into the flowchart. Keep in mind that the
-                                    current version of framework allows you to build 3 layers of nodes, each for each node
-                                    type with just one cloud node in the cloud layer. The children nodes for cloud or fog
-                                    are not constraint in size. Also the relations are constraint are you can link nodes
-                                    in this way: Cloud to Fog and Fog to Edge.
+                                    <li>
+                                        Drag and drop nodes from the left side bar into the flowchart. Keep in mind that
+                                        the
+                                        current version of the framework allows you to build 3 layers of nodes, each for
+                                        each node
+                                        type with just one cloud node in the cloud layer. The children nodes for cloud
+                                        or fog
+                                        are not constrained in size. Also, the connections are limited: you can link
+                                        nodes in this
+                                        way: Cloud to Fog and Fog to Edge.
+                                    </li>
                                 </ul>
                                 <ul>
-                                    Note: You can save at any time in a json file the current state of configuration even
-                                    after the following steps and you can load it later for ease of use. Use {" "}
-                                    <b>Save Topology</b> or <b>Load Saved Topology</b> buttons for these operations.
+                                    <li>
+                                        Note: You can save the current configuration at any time in a JSON file for ease
+                                        of use later.
+                                        Use <strong>Save Topology</strong> or <strong>Load Saved
+                                        Topology</strong> buttons for these operations.
+                                    </li>
                                 </ul>
-                            </p>
+                            </div>
+
                         </li>
                         <li className="step-item">
                             <h5 className="step-title">Step 2: Node Setup</h5>
                             <p className="step-description">
                                 <ul>
                                     After the network was created its time to setup each node. By pressing on {" "}
-                                      <img
-                                          src={ConfigIcon}
-                                          alt="Cloud Training"
-                                          style={{width: "20px", height: "20px"}}
-                                      />
+                                    <img
+                                        src={ConfigIcon}
+                                        alt="Cloud Training"
+                                        style={{width: "20px", height: "20px"}}
+                                    />
                                     {" "} button you can set the name or label, the IP Address and the Port of the node.
                                     After you press save, a request will be made to the backend deployed node to configure
                                     it with these properties.

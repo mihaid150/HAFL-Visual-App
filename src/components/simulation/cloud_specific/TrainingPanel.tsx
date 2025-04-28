@@ -29,12 +29,18 @@ const TrainingPanel: React.FC<TrainingPanelProps> = ({ onClose }) => {
         try {
             const response = await sendOperation("get_training_process_parameters", {});
             if (response && typeof response === "object") {
-                setTrainingParams(response as TrainingParameters);
+                const params = response as TrainingParameters;
+                setTrainingParams({
+                    current_date: params.current_date || "",
+                    is_cache_active: params.is_cache_active ?? false,
+                    genetic_strategy: params.genetic_strategy || "",
+                });
             }
         } catch (error: unknown) {
             console.error("Error fetching training process parameters:", error);
         }
     }, [sendOperation]);
+
 
     useEffect(() => {
         const fetchParameters = async () => {
@@ -104,7 +110,7 @@ const TrainingPanel: React.FC<TrainingPanelProps> = ({ onClose }) => {
                     Current Date:
                     <input
                         type="date"
-                        value={trainingParams.current_date}
+                        value={trainingParams.current_date || ""}
                         onChange={(e) =>
                             setTrainingParams({
                                 ...trainingParams,
@@ -119,7 +125,7 @@ const TrainingPanel: React.FC<TrainingPanelProps> = ({ onClose }) => {
                     Cache Active:
                     <input
                         type="checkbox"
-                        checked={trainingParams.is_cache_active}
+                        checked={trainingParams.is_cache_active || false}
                         onChange={(e) =>
                             setTrainingParams({
                                 ...trainingParams,
@@ -134,7 +140,7 @@ const TrainingPanel: React.FC<TrainingPanelProps> = ({ onClose }) => {
                     Genetic Strategy:
                     <input
                         type="text"
-                        value={trainingParams.genetic_strategy}
+                        value={trainingParams.genetic_strategy || ""}
                         onChange={(e) =>
                             setTrainingParams({
                                 ...trainingParams,

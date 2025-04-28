@@ -1,7 +1,7 @@
 import React from 'react';
 import { FedNodeType } from '../FedNodes.ts';
-import '../style/ButtonsStyle.sass'
-import '../style/LeftSidebar.sass'
+import '../style/ButtonsStyle.sass';
+import '../style/LeftSidebar.sass';
 
 interface SidebarProps {
     onSaveTopology: () => void;
@@ -11,20 +11,25 @@ interface SidebarProps {
     onFetchNodes: () => void;
     onNotifyParents: () => void;
     onNotifyChildren: () => void;
+    onClearCloudResults: () => void;
+    onRecordNodesToCloudDb: () => void;
+    onUpdateRecordNodesToCloudDb: () => void;
 }
 
 const LeftSidebar: React.FC<SidebarProps> = ({
-    onSaveTopology,
-    onLoadTopology,
-    onRemoveTopology,
-    onNodesInitialization,
-    onFetchNodes,
-    onNotifyParents,
-    onNotifyChildren
-}) => {
-
+                                                 onSaveTopology,
+                                                 onLoadTopology,
+                                                 onRemoveTopology,
+                                                 onNodesInitialization,
+                                                 onFetchNodes,
+                                                 onNotifyParents,
+                                                 onNotifyChildren,
+                                                 onClearCloudResults,
+                                                 onRecordNodesToCloudDb,
+                                                 onUpdateRecordNodesToCloudDb,
+                                             }) => {
     const onDragStart = (event: React.DragEvent, nodeType: FedNodeType) => {
-        // Store the node type as a string so it can be later interpreted by the drop handler.
+        // Store the node type so that the drop handler can interpret it.
         event.dataTransfer.setData('application/reactflow', String(nodeType));
         event.dataTransfer.effectAllowed = 'move';
     };
@@ -76,6 +81,15 @@ const LeftSidebar: React.FC<SidebarProps> = ({
                 </button>
                 <button onClick={onNotifyChildren} className="blue-button">
                     Notify Children
+                </button>
+                <button onClick={onClearCloudResults} className="blue-button">
+                    Clear Cloud Results
+                </button>
+                <button onClick={onRecordNodesToCloudDb} className="blue-button">
+                    Record Nodes To Database
+                </button>
+                <button onClick={onUpdateRecordNodesToCloudDb} className="blue-button">
+                    Update Nodes in Database
                 </button>
             </div>
         </aside>

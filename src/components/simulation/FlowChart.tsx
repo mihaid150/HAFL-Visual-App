@@ -22,7 +22,8 @@ import RightSidebar from './side_bars/RightSideBar.tsx';
 import './style/ButtonsStyle.sass';
 import NodeEditPanel from './node_actions/NodeEditPanel.tsx';
 import NodeOperationsPanel from './node_actions/NodeOperationsPanel.tsx';
-import { notifyParents, notifyChildren, fetchNodesConnections, executeNodesInitialization } from './NotifyConnections.ts';
+import { notifyParents, notifyChildren, fetchNodesConnections, executeNodesInitialization, executeClearCloudResults,
+        update_node_records, recordNodesToCloudDb} from './NotifyConnections.ts';
 import CloudPanelsWrapper from "./cloud_specific/CloudPanelsWrapper.tsx";
 import {FogPanelsWrapper} from "./fog_specific/FogPanelsWrapper.tsx";
 
@@ -248,6 +249,9 @@ const FlowChart: React.FC = () => {
                 onFetchNodes={fetchNodes}
                 onNotifyParents={() => notifyParents(reduxNodes, edges, dispatch)}
                 onNotifyChildren={() => notifyChildren(reduxNodes, edges, dispatch)}
+                onClearCloudResults={() => executeClearCloudResults(reduxNodes)}
+                onRecordNodesToCloudDb={() => recordNodesToCloudDb(reduxNodes)}
+                onUpdateRecordNodesToCloudDb={() => update_node_records(reduxNodes)}
             />
             <div style={{ flexGrow: 1, position: 'relative' }} ref={reactFlowWrapper}>
                 <ReactFlow

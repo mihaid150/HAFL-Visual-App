@@ -12,6 +12,7 @@ export interface NodeRecord {
     flowchart_position: { x: number; y: number };
     parentId?: string;
     childrenIds?: string[];
+    device_mac: string;
     sendOperation?: (operation: string, data: unknown) => Promise<unknown>;
 }
 

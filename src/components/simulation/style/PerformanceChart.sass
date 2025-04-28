@@ -6,13 +6,30 @@
   .controls
     margin-bottom: 1rem
 
+    // Style for the "Search Performance Metrics" button
+    button
+      background-color: #28a745
+      border: none
+      color: #fff
+      padding: 0.5rem 1rem
+      border-radius: 4px
+      font-size: 1rem
+      cursor: pointer
+      margin-right: 1rem
+      transition: background-color 0.3s ease
+      &:hover
+        background-color: #218838
+      &:focus
+        outline: none
+        box-shadow: 0 0 0 2px rgba(33,138,54,0.5)
+
     label
       margin-right: 1rem
 
-    // Style the select (dropdown) element
+    // Common styling for dropdowns
     select
-      width: 250px         // sets the width of the dropdown box
-      height: 40px         // sets the height of the dropdown box
+      width: 250px
+      height: 40px
       padding: 0.5rem 1rem
       border: 1px solid #ccc
       border-radius: 4px
@@ -25,17 +42,57 @@
       background-repeat: no-repeat
       background-position: right 0.75rem center
       background-size: 0.65rem auto
-
       &:focus
         outline: none
         border-color: #007bff
 
+    // Specific styling for the extra edge node dropdown
+    select#edgeSelect
+      margin-left: 1rem
+
     .continuous-fetch
       margin-left: 1rem
 
-  // New wrapper container with padding, background, and shadow
+    // New styling for date filtering controls
+    .date-filter
+      margin-top: 1rem
+      display: flex
+      align-items: center
+
+      label
+        margin-right: 0.5rem
+
+      input[type="date"]
+        width: auto
+        height: 40px
+        padding: 0.5rem
+        border: 1px solid #ccc
+        border-radius: 4px
+        font-size: 1rem
+        margin-right: 1rem
+
+      button
+        background-color: #007bff
+        border: none
+        color: #fff
+        padding: 0.5rem 1rem
+        border-radius: 4px
+        font-size: 1rem
+        cursor: pointer
+        margin-right: 0.5rem
+        transition: background-color 0.3s ease
+        &:hover
+          background-color: #0069d9
+        &:focus
+          outline: none
+          box-shadow: 0 0 0 2px rgba(0,123,255,0.5)
+
+    // Specific styling for the "Save Chart as Image" button
+    .save-chart
+      margin-top: 1rem
+
   .chart-wrapper
-    padding: 1rem           // adds padding around the chart container
+    padding: 1rem
     background-color: #ffffff
     border-radius: 8px
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1)

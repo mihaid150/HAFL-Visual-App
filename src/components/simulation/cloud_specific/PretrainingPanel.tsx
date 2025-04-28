@@ -27,19 +27,26 @@ const PretrainingPanel: React.FC<PretrainingPanelProps> = ({ onClose }) => {
         current_date: '',
         is_cache_active: false,
         genetic_strategy: '',
-        model_type: ''
+        model_type: '1'
     });
 
     const getCurrentParameters = useCallback(async () => {
         try {
             const response = await sendOperation("get_training_process_parameters", {});
             if (response && typeof response === "object") {
-                setPretrainingParams(response as PretrainingParameters);
+                setPretrainingParams({
+                    start_date: (response as PretrainingParameters).start_date || "",
+                    current_date: (response as PretrainingParameters).current_date || "",
+                    is_cache_active: (response as PretrainingParameters).is_cache_active ?? false,
+                    genetic_strategy: (response as PretrainingParameters).genetic_strategy || "",
+                    model_type: (response as PretrainingParameters).model_type || ""
+                });
             }
         } catch (error: unknown) {
             console.error("Error fetching training process parameters:", error);
         }
     }, [sendOperation]);
+
 
     useEffect(() => {
         const fetchParameters = async () => {
@@ -61,6 +68,11 @@ const PretrainingPanel: React.FC<PretrainingPanelProps> = ({ onClose }) => {
 
             if (cloud_service_state !== 1) {
                 alert("Cloud Service is operational and cannot be configured. Wait until termination.");
+                return;
+            }
+
+            if (!pretrainingParams.model_type) {
+                alert("Please enter a model type");
                 return;
             }
 
@@ -87,7 +99,7 @@ const PretrainingPanel: React.FC<PretrainingPanelProps> = ({ onClose }) => {
                     Start Date:
                     <input
                         type="date"
-                        value={pretrainingParams.start_date}
+                        value={pretrainingParams.start_date || ""}
                         onChange={(e) =>
                             setPretrainingParams({
                                 ...pretrainingParams,
@@ -102,7 +114,7 @@ const PretrainingPanel: React.FC<PretrainingPanelProps> = ({ onClose }) => {
                     End Date:
                     <input
                         type="date"
-                        value={pretrainingParams.current_date}
+                        value={pretrainingParams.current_date || ""}
                         onChange={(e) =>
                             setPretrainingParams({
                                 ...pretrainingParams,
@@ -117,7 +129,7 @@ const PretrainingPanel: React.FC<PretrainingPanelProps> = ({ onClose }) => {
                     Caching Active:
                     <input
                         type="checkbox"
-                        checked={pretrainingParams.is_cache_active}
+                        checked={pretrainingParams.is_cache_active || false}
                         onChange={(e) =>
                             setPretrainingParams({
                                 ...pretrainingParams,
@@ -132,7 +144,7 @@ const PretrainingPanel: React.FC<PretrainingPanelProps> = ({ onClose }) => {
                     Genetic Strategy:
                     <input
                         type="text"
-                        value={pretrainingParams.genetic_strategy}
+                        value={pretrainingParams.genetic_strategy || ""}
                         onChange={(e) =>
                             setPretrainingParams({
                                 ...pretrainingParams,
@@ -149,14 +161,13 @@ const PretrainingPanel: React.FC<PretrainingPanelProps> = ({ onClose }) => {
                     <input
                         type="text"
                         value={pretrainingParams.model_type}
-                        onChange={(e) =>
-                            setPretrainingParams({
-                                ...pretrainingParams,
-                                model_type: e.target.value,
-                            })
-                        }
+                        onChange={(e) => setPretrainingParams({
+                            ...pretrainingParams,
+                            model_type: e.target.value,
+                        })}
                         placeholder="Model Type"
                     />
+
                 </label>
             </div>
             <div className="button-group">
